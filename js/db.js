@@ -20,7 +20,7 @@ const DB = {
       .select()
       .single();
 
-    if (error) this._handleError(error, 'inicializar a familia');
+    if (error) this._handleError(error, 'inicializar a família');
 
     this._familia = data;
     return data;
@@ -105,11 +105,11 @@ const DB = {
       .eq('familia_id', familiaId)
       .order('mes_ref', { ascending: false });
 
-    if (error) this._handleError(error, 'buscar rendimentos variaveis');
+    if (error) this._handleError(error, 'buscar rendimentos variáveis');
     return data || [];
   },
 
-  async upsertRendimentoVariavel({ mes_ref, valor, responsavel = 'esposa', descricao }) {
+  async upsertRendimentoVariavel({ mes_ref, valor, responsavel = 'meiry', descricao }) {
     const familiaId = await this._familiaId();
     const { data, error } = await window.sb
       .from('rendimentos_variaveis')
@@ -126,7 +126,7 @@ const DB = {
       .select()
       .single();
 
-    if (error) this._handleError(error, 'salvar rendimento variavel');
+    if (error) this._handleError(error, 'salvar rendimento variável');
     return data;
   },
 
@@ -139,8 +139,8 @@ const DB = {
       .or(`fixa.eq.true,mes_ref.eq.${mesRef}`)
       .order('data', { ascending: false });
 
-    if (error) this._handleError(error, 'buscar despesas do mes');
-    return data || [];
+    if (error) this._handleError(error, 'buscar despesas do mês');
+    return (data || []).filter(item => Utils.despesaAtivaNoMes(item, mesRef));
   },
 
   async getAllDespesas() {
@@ -155,7 +155,7 @@ const DB = {
     return data || [];
   },
 
-  async addDespesa({ descricao, valor, categoria, data, responsavel, fixa, observacao }) {
+  async addDespesa({ descricao, valor, categoria, data, responsavel, fixa, recorrencia_ate, observacao }) {
     const familiaId = await this._familiaId();
     const { data: row, error } = await window.sb
       .from('despesas')
@@ -168,6 +168,7 @@ const DB = {
         mes_ref: data.slice(0, 7),
         responsavel,
         fixa: !!fixa,
+        recorrencia_ate,
         observacao,
       })
       .select()
@@ -211,7 +212,7 @@ const DB = {
       .eq('ativo', true)
       .order('created_at', { ascending: true });
 
-    if (error) this._handleError(error, 'buscar cartoes');
+    if (error) this._handleError(error, 'buscar cartões');
     return data || [];
   },
 
@@ -227,7 +228,7 @@ const DB = {
       .select()
       .single();
 
-    if (error) this._handleError(error, 'adicionar cartao');
+    if (error) this._handleError(error, 'adicionar cartão');
     return data;
   },
 
@@ -239,7 +240,7 @@ const DB = {
       .eq('id', id)
       .eq('familia_id', familiaId);
 
-    if (error) this._handleError(error, 'remover cartao');
+    if (error) this._handleError(error, 'remover cartão');
   },
 
   async getComprasCartaoMes(mesRef) {
@@ -254,7 +255,7 @@ const DB = {
       .gte('data_compra', dataLimite)
       .order('data_compra', { ascending: false });
 
-    if (error) this._handleError(error, 'buscar compras do cartao');
+    if (error) this._handleError(error, 'buscar compras do cartão');
     return data || [];
   },
 
@@ -266,7 +267,7 @@ const DB = {
       .eq('familia_id', familiaId)
       .order('data_compra', { ascending: false });
 
-    if (error) this._handleError(error, 'buscar todas as compras do cartao');
+    if (error) this._handleError(error, 'buscar todas as compras do cartão');
     return data || [];
   },
 
@@ -288,7 +289,7 @@ const DB = {
       .select('*, cartoes(nome, empresa)')
       .single();
 
-    if (error) this._handleError(error, 'registrar compra no cartao');
+    if (error) this._handleError(error, 'registrar compra no cartão');
     return data;
   },
 
@@ -300,7 +301,7 @@ const DB = {
       .eq('id', id)
       .eq('familia_id', familiaId);
 
-    if (error) this._handleError(error, 'remover compra do cartao');
+    if (error) this._handleError(error, 'remover compra do cartão');
   },
 };
 

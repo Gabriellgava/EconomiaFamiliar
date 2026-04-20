@@ -1,419 +1,379 @@
 const Layout = {
-  renderAppShell(rootId = 'app-root') {
-    const root = document.getElementById(rootId);
+  renderAppShell() {
+    const root = document.getElementById('app-root');
     if (!root) return;
 
     root.innerHTML = `
-      <div id="loading-global" class="hidden fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center">
-        <div class="text-center">
-          <div class="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p class="text-sm text-gray-500">Carregando...</p>
-        </div>
-      </div>
-
-      <div id="page-app" class="min-h-screen flex flex-col">
-        <header class="bg-white border-b border-gray-100 sticky top-0 z-40">
-          <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="flex items-center justify-between h-16 gap-3">
-              <div class="flex items-center gap-3 min-w-0">
-                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span class="text-sm">💰</span>
-                </div>
-                <div class="min-w-0">
-                  <span class="font-display font-semibold text-gray-800 block truncate">Familia Financas</span>
-                  <span class="text-xs text-gray-400 hidden sm:block">Planejamento da casa em um lugar so</span>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                <span id="nav-user-nome" class="text-sm text-gray-500 hidden lg:block"></span>
-                <button id="theme-toggle" type="button" class="theme-toggle inline-flex items-center gap-2 text-xs text-gray-500 border border-gray-200 px-3 py-1.5 rounded-lg hover:border-emerald-300 hover:text-emerald-600 transition">
-                  <span id="theme-toggle-icon" aria-hidden="true">🌙</span>
-                  <span id="theme-toggle-label" class="theme-toggle-text">Modo escuro</span>
-                </button>
-                <span class="hidden sm:inline text-xs text-gray-400 border border-gray-200 px-3 py-1.5 rounded-lg">Uso local</span>
-              </div>
+      <div class="app-shell">
+        <header class="app-header">
+          <div class="container header-inner">
+            <div>
+              <h1 class="brand-title">Economia Familiar</h1>
+              <p class="brand-subtitle">Organização financeira simples para Gabriel e Meiry.</p>
             </div>
 
-            <nav class="hidden md:flex items-center gap-1 pb-3 mobile-scroll overflow-x-auto">
-              <a href="#dashboard" data-nav-link class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Dashboard</a>
-              <a href="#despesas" data-nav-link class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Despesas</a>
-              <a href="#cartoes" data-nav-link class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Cartoes</a>
-              <a href="#rendimentos" data-nav-link class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Rendimentos</a>
-              <a href="#saude" data-nav-link class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Saude Financeira</a>
-            </nav>
-
-            <nav class="md:hidden flex gap-1 pb-2 overflow-x-auto mobile-scroll">
-              <a href="#dashboard" data-nav-link class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Dashboard</a>
-              <a href="#despesas" data-nav-link class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Despesas</a>
-              <a href="#cartoes" data-nav-link class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Cartoes</a>
-              <a href="#rendimentos" data-nav-link class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Rendimentos</a>
-              <a href="#saude" data-nav-link class="flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 transition">Saude</a>
-            </nav>
+            <button id="theme-toggle" class="theme-toggle" type="button">
+              <span id="theme-toggle-icon" class="icon-chip">🌙</span>
+              <span id="theme-toggle-label">Modo escuro</span>
+            </button>
           </div>
         </header>
 
-        <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
-          ${this._dashboard()}
-          ${this._despesas()}
-          ${this._cartoes()}
-          ${this._rendimentos()}
-          ${this._saude()}
+        <main class="container main-grid">
+          <aside class="sidebar">
+            <p class="nav-title">Navegação</p>
+            <nav class="nav-list">
+              ${this._navLink('#dashboard', '📊', 'Painel')}
+              ${this._navLink('#despesas', '🧾', 'Despesas')}
+              ${this._navLink('#cartoes', '💳', 'Cartões')}
+              ${this._navLink('#rendimentos', '💰', 'Rendimentos')}
+              ${this._navLink('#saude', '❤️', 'Saúde financeira')}
+            </nav>
+          </aside>
+
+          <section class="screen-stack">
+            <section id="screen-dashboard" class="screen" data-screen></section>
+            <section id="screen-despesas" class="screen" data-screen></section>
+            <section id="screen-cartoes" class="screen" data-screen></section>
+            <section id="screen-rendimentos" class="screen" data-screen></section>
+            <section id="screen-saude" class="screen" data-screen></section>
+          </section>
         </main>
 
-        <footer class="border-t border-gray-100 py-4 text-center text-xs text-gray-400">
-          Familia Financas - seus dados ficam salvos neste navegador
-        </footer>
+        <div id="loading-global" class="hidden"></div>
+        <div id="toast-stack" class="toast-stack"></div>
       </div>
+    `;
+
+    this.renderDashboardScreen();
+    this.renderDespesasScreen();
+    this.renderCartoesScreen();
+    this.renderRendimentosScreen();
+    this.renderSaudeScreen();
+  },
+
+  renderDashboardScreen() {
+    const el = document.getElementById('screen-dashboard');
+    if (!el) return;
+
+    el.innerHTML = `
+      <section class="hero">
+        <div>
+          <h2>Visão geral do mês</h2>
+          <p>Acompanhe entradas, despesas e o impacto das compras no cartão.</p>
+        </div>
+        ${this._monthNav()}
+      </section>
+
+      <section id="dashboard-metricas" class="metrics-grid"></section>
+
+      <section class="section-grid">
+        <article class="panel span-7">
+          <div class="actions-row">
+            <div>
+              <h3 class="section-title">Resumo do mês</h3>
+              <p class="subtle">Entradas e saídas com atualização automática.</p>
+            </div>
+          </div>
+          <div id="dashboard-resumo" class="list"></div>
+        </article>
+
+        <article class="panel span-5">
+          <h3 class="section-title">Últimos lançamentos</h3>
+          <p class="subtle">Despesas e compras mais recentes.</p>
+          <div id="dashboard-ultimos" class="list"></div>
+        </article>
+      </section>
     `;
   },
 
-  _dashboard() {
-    return `
-      <div id="screen-dashboard" data-screen class="hidden">
-        <div class="section-header flex items-center justify-between mb-6">
-          <div>
-            <h1 class="font-display font-bold text-2xl text-gray-900">Dashboard</h1>
-            <p class="text-sm text-gray-400 mt-0.5">Visao geral do seu mes</p>
-          </div>
-          <div class="month-switcher flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2">
-            <button id="dash-btn-prev" class="text-gray-400 hover:text-gray-700 transition w-7 h-7 flex items-center justify-center">‹</button>
-            <span id="dash-mes-label" class="text-sm font-semibold text-gray-700 min-w-32 text-center"></span>
-            <button id="dash-btn-next" class="text-gray-400 hover:text-gray-700 transition w-7 h-7 flex items-center justify-center">›</button>
-          </div>
+  renderDespesasScreen() {
+    const el = document.getElementById('screen-despesas');
+    if (!el) return;
+
+    el.innerHTML = `
+      <section class="hero">
+        <div>
+          <h2>Despesas da casa</h2>
+          <p>Cadastre despesas avulsas ou recorrentes com prazo para encerrar.</p>
         </div>
+        ${this._monthNav()}
+      </section>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mobile-card">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg">💵</span>
-              <span class="text-xs text-gray-400 font-medium" id="dash-receita-label">Receita total</span>
-            </div>
-            <p id="dash-receita-val" class="text-2xl font-semibold mt-1">—</p>
-          </div>
-          <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mobile-card">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg">💸</span>
-              <span class="text-xs text-gray-400 font-medium" id="dash-gastos-label">Total de gastos</span>
-            </div>
-            <p id="dash-gastos-val" class="text-2xl font-semibold mt-1">—</p>
-          </div>
-          <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mobile-card">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg">🏦</span>
-              <span class="text-xs text-gray-400 font-medium" id="dash-saldo-label">Saldo livre</span>
-            </div>
-            <p id="dash-saldo-val" class="text-2xl font-semibold mt-1">—</p>
-          </div>
-          <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm mobile-card">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-lg">📊</span>
-              <span class="text-xs text-gray-400 font-medium" id="dash-comprometido-label">Comprometido</span>
-            </div>
-            <p id="dash-comprometido-val" class="text-2xl font-semibold mt-1">—</p>
-            <div class="bg-gray-100 rounded-full h-2 mt-2 overflow-hidden">
-              <div id="dash-barra-comprometido" class="h-2 rounded-full w-0"></div>
-            </div>
-          </div>
-        </div>
+      <section class="section-grid">
+        <article class="panel span-5">
+          <h3 class="section-title">Nova despesa</h3>
+          <p class="subtle">Use recorrência quando a despesa se repetir mês a mês.</p>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-          <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-            <h3 class="font-display font-semibold text-sm text-gray-700 mb-4">Despesas por categoria</h3>
-            <div id="dash-grafico-cats"></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-            <h3 class="font-display font-semibold text-sm text-gray-700 mb-4">Resumo do mes</h3>
-            <div id="dash-resumo"></div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-          <h3 class="font-display font-semibold text-sm text-gray-700 mb-4">Ultimas movimentacoes</h3>
-          <div id="dash-ultimas"></div>
-        </div>
-      </div>
-    `;
-  },
-
-  _despesas() {
-    return `
-      <div id="screen-despesas" data-screen class="hidden">
-        <div class="section-header flex items-center justify-between mb-6">
-          <div>
-            <h1 class="font-display font-bold text-2xl text-gray-900">Despesas</h1>
-            <p class="text-sm text-gray-400 mt-0.5">Controle seus gastos mensais</p>
-          </div>
-          <div class="month-switcher flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-2">
-            <button id="desp-btn-prev" class="text-gray-400 hover:text-gray-700 w-7 h-7 flex items-center justify-center">‹</button>
-            <span id="desp-mes-label" class="text-sm font-semibold text-gray-700 min-w-32 text-center"></span>
-            <button id="desp-btn-next" class="text-gray-400 hover:text-gray-700 w-7 h-7 flex items-center justify-center">›</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div class="lg:col-span-2">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm sticky top-24 mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-5">Nova despesa</h3>
-              <form id="form-despesa" class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Descricao *</label>
-                  <input id="desp-descricao" type="text" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent" placeholder="Ex: Conta de agua, mercado..." />
-                </div>
-                <div class="grid mobile-grid-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Valor (R$) *</label>
-                    <input id="desp-valor" type="number" step="0.01" min="0.01" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent" placeholder="0,00" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Data *</label>
-                    <input id="desp-data" type="date" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent" />
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Categoria</label>
-                  <select id="desp-categoria" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"></select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Responsavel</label>
-                  <select id="desp-responsavel" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"></select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Observacao</label>
-                  <input id="desp-obs" type="text" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent" placeholder="Detalhe adicional..." />
-                </div>
-                <label class="flex items-start gap-3 p-3 bg-teal-50 rounded-xl cursor-pointer hover:bg-teal-100 transition">
-                  <input id="desp-fixa" type="checkbox" class="mt-0.5 w-4 h-4 accent-teal-600 rounded" />
-                  <div>
-                    <p class="text-sm font-medium text-teal-800">Repetir todo mes</p>
-                    <p class="text-xs text-teal-600 mt-0.5">Para agua, luz, internet, aluguel e outras contas recorrentes.</p>
-                  </div>
-                </label>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm">Adicionar despesa</button>
-              </form>
-            </div>
-          </div>
-
-          <div class="lg:col-span-3">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <div class="section-header flex items-center justify-between mb-4">
-                <h3 class="font-display font-semibold text-base text-gray-800">Despesas do mes</h3>
-                <span class="text-xs text-gray-400">Total: <span id="desp-total" class="font-semibold text-red-500">R$ 0,00</span></span>
+          <form id="form-despesa">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="desp-descricao">Descrição</label>
+                <input id="desp-descricao" type="text" placeholder="Ex.: Aluguel, internet, mercado" />
               </div>
-              <div id="desp-lista"></div>
+
+              <div class="field">
+                <label for="desp-valor">Valor</label>
+                <input id="desp-valor" type="number" min="0" step="0.01" placeholder="0,00" />
+              </div>
+
+              <div class="field">
+                <label for="desp-data">Data</label>
+                <input id="desp-data" type="date" />
+              </div>
+
+              <div class="field">
+                <label for="desp-categoria">Categoria</label>
+                <select id="desp-categoria"></select>
+              </div>
+
+              <div class="field">
+                <label for="desp-responsavel">Responsável</label>
+                <select id="desp-responsavel"></select>
+              </div>
+
+              <div class="field">
+                <label for="desp-tipo">Tipo de despesa</label>
+                <select id="desp-tipo">
+                  <option value="avulsa">Avulsa</option>
+                  <option value="recorrente">Recorrente</option>
+                </select>
+              </div>
+
+              <div id="desp-recorrencia-wrap" class="field hidden">
+                <label for="desp-recorrencia-ate">Repetir até</label>
+                <input id="desp-recorrencia-ate" type="date" />
+                <small>Deixe em branco para continuar sem prazo final.</small>
+              </div>
+
+              <div class="field span-2">
+                <label for="desp-obs">Observação</label>
+                <textarea id="desp-obs" rows="3" placeholder="Detalhes opcionais"></textarea>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+
+            <div class="actions-row">
+              <span class="subtle">As despesas recorrentes passam a valer a partir da data informada.</span>
+              <button class="btn btn-primary" type="submit">Salvar despesa</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="panel span-7">
+          <h3 class="section-title">Lançamentos do mês</h3>
+          <p class="subtle">Aqui aparecem as despesas ativas no mês selecionado.</p>
+          <div id="desp-lista" class="list"></div>
+        </article>
+      </section>
     `;
   },
 
-  _cartoes() {
-    return `
-      <div id="screen-cartoes" data-screen class="hidden">
-        <div class="mb-6">
-          <h1 class="font-display font-bold text-2xl text-gray-900">Cartoes de Credito</h1>
-          <p class="text-sm text-gray-400 mt-0.5">Gerencie seus cartoes e controle as parcelas</p>
+  renderCartoesScreen() {
+    const el = document.getElementById('screen-cartoes');
+    if (!el) return;
+
+    el.innerHTML = `
+      <section class="hero">
+        <div>
+          <h2>Cartões</h2>
+          <p>Cadastre apenas o nome do cartão e a empresa emissora.</p>
         </div>
+        ${this._monthNav()}
+      </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="space-y-5">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-5">Adicionar cartao</h3>
-              <form id="form-cartao" class="space-y-4">
-                <div class="space-y-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Nome do cartao *</label>
-                    <input id="cc-nome" type="text" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Ex: Cartao principal, Cartao da casa..." />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Empresa do cartao *</label>
-                    <input id="cc-empresa" type="text" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Ex: Nubank, Inter, Itau..." />
-                  </div>
-                </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm">Adicionar cartao</button>
-              </form>
+      <section class="section-grid">
+        <article class="panel span-5">
+          <h3 class="section-title">Novo cartão</h3>
+          <form id="form-cartao">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="cc-nome">Nome do cartão</label>
+                <input id="cc-nome" type="text" placeholder="Ex.: Nubank, Mercado Pago" />
+              </div>
+              <div class="field span-2">
+                <label for="cc-empresa">Empresa</label>
+                <input id="cc-empresa" type="text" placeholder="Ex.: Mastercard, Visa" />
+              </div>
             </div>
-
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-4">Meus cartoes</h3>
-              <div id="cc-lista-cartoes"></div>
+            <div class="actions-row">
+              <span class="subtle">Você pode usar o nome que fizer mais sentido para vocês.</span>
+              <button class="btn btn-primary" type="submit">Adicionar cartão</button>
             </div>
-          </div>
+          </form>
 
-          <div class="space-y-5">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-5">Registrar compra</h3>
-              <form id="form-compra-cc" class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Cartao *</label>
-                  <select id="cc-compra-cartao" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"></select>
+          <div class="panel" style="margin-top: 20px; padding: 20px;">
+            <h3 class="section-title">Registrar compra</h3>
+            <form id="form-compra-cc">
+              <div class="form-grid">
+                <div class="field span-2">
+                  <label for="cc-compra-cartao">Cartão</label>
+                  <select id="cc-compra-cartao"></select>
                 </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Descricao *</label>
-                  <input id="cc-compra-descricao" type="text" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Ex: supermercado, tenis..." />
+                <div class="field span-2">
+                  <label for="cc-compra-descricao">Descrição</label>
+                  <input id="cc-compra-descricao" type="text" />
                 </div>
-                <div class="grid mobile-grid-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Valor total (R$) *</label>
-                    <input id="cc-compra-valor" type="number" step="0.01" min="0.01" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="0,00" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Parcelas</label>
-                    <select id="cc-compra-parcelas" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                      <option value="1">A vista (1x)</option>
-                      <option value="2">2x</option>
-                      <option value="3">3x</option>
-                      <option value="4">4x</option>
-                      <option value="5">5x</option>
-                      <option value="6">6x</option>
-                      <option value="10">10x</option>
-                      <option value="12">12x</option>
-                      <option value="18">18x</option>
-                      <option value="24">24x</option>
-                    </select>
-                  </div>
+                <div class="field">
+                  <label for="cc-compra-valor">Valor total</label>
+                  <input id="cc-compra-valor" type="number" min="0" step="0.01" />
                 </div>
-                <div id="cc-parcela-preview" class="hidden text-xs text-blue-600 font-medium bg-blue-50 rounded-lg px-3 py-2"></div>
-                <div class="grid mobile-grid-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Categoria</label>
-                    <select id="cc-compra-categoria" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"></select>
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Data da compra *</label>
-                    <input id="cc-compra-data" type="date" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Observacao</label>
-                  <input id="cc-compra-obs" type="text" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Detalhe adicional..." />
-                </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm">Registrar compra</button>
-              </form>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-4">Compras registradas</h3>
-              <div id="cc-lista-compras"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  },
-
-  _rendimentos() {
-    return `
-      <div id="screen-rendimentos" data-screen class="hidden">
-        <div class="mb-6">
-          <h1 class="font-display font-bold text-2xl text-gray-900">Rendimentos</h1>
-          <p class="text-sm text-gray-400 mt-0.5">Cadastre salarios, rendas fixas e rendimentos variaveis</p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="space-y-5">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-5">Novo rendimento fixo</h3>
-              <form id="form-rendimento-fixo" class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Descricao *</label>
-                  <input id="rendfix-descricao" type="text" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Ex: salario, aluguel recebido..." />
-                </div>
-                <div class="grid mobile-grid-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Valor (R$) *</label>
-                    <input id="rendfix-valor" type="number" step="0.01" min="0.01" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="0,00" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Dia de recebimento</label>
-                    <input id="rendfix-dia" type="number" min="1" max="31" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="5" />
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Responsavel</label>
-                  <select id="rendfix-responsavel" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <option value="eu">Eu</option>
-                    <option value="esposa">Esposa</option>
-                    <option value="familia">Familia</option>
+                <div class="field">
+                  <label for="cc-compra-parcelas">Parcelas</label>
+                  <select id="cc-compra-parcelas">
+                    ${Array.from({ length: 24 }, (_, i) => `<option value="${i + 1}">${i + 1}x</option>`).join('')}
                   </select>
                 </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm">Adicionar rendimento</button>
-              </form>
-            </div>
-
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-4">Rendimentos fixos cadastrados</h3>
-              <div id="rend-fixos-lista"></div>
-            </div>
+                <div class="field">
+                  <label for="cc-compra-categoria">Categoria</label>
+                  <select id="cc-compra-categoria"></select>
+                </div>
+                <div class="field">
+                  <label for="cc-compra-data">Data da compra</label>
+                  <input id="cc-compra-data" type="date" />
+                </div>
+                <div class="field span-2">
+                  <label for="cc-compra-obs">Observação</label>
+                  <textarea id="cc-compra-obs" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="actions-row">
+                <span id="cc-parcela-preview" class="badge hidden"></span>
+                <button class="btn btn-primary" type="submit">Registrar compra</button>
+              </div>
+            </form>
           </div>
+        </article>
 
-          <div class="space-y-5">
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-2">Renda variavel - Esposa</h3>
-              <p class="text-xs text-gray-500 mb-5">Registre mes a mes os valores recebidos pelas substituicoes em escolas.</p>
-              <form id="form-rendimento-var" class="space-y-4">
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Mes de referencia</label>
-                  <select id="rend-var-mes" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"></select>
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Valor recebido (R$) *</label>
-                  <input id="rendvar-valor" type="number" step="0.01" min="0" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="0,00" />
-                </div>
-                <div>
-                  <label class="block text-xs font-medium text-gray-600 mb-1.5">Observacao</label>
-                  <input id="rendvar-obs" type="text" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="Ex: 8 dias substituidos" />
-                </div>
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-xl transition text-sm">Salvar</button>
-              </form>
-            </div>
+        <article class="panel span-7">
+          <h3 class="section-title">Cartões cadastrados</h3>
+          <div id="cc-lista-cartoes" class="list"></div>
 
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-              <h3 class="font-display font-semibold text-base text-gray-800 mb-4">Historico renda variavel</h3>
-              <div id="rend-var-lista"></div>
-            </div>
+          <div style="margin-top: 24px;">
+            <h3 class="section-title">Compras do mês</h3>
+            <p class="subtle">Parcelas que impactam o mês selecionado.</p>
+            <div id="cc-lista-compras" class="list"></div>
           </div>
+        </article>
+      </section>
+    `;
+  },
+
+  renderRendimentosScreen() {
+    const el = document.getElementById('screen-rendimentos');
+    if (!el) return;
+
+    el.innerHTML = `
+      <section class="hero">
+        <div>
+          <h2>Rendimentos</h2>
+          <p>Separe entradas fixas e a renda variável da Meiry por mês.</p>
         </div>
+        ${this._monthNav()}
+      </section>
+
+      <section class="section-grid">
+        <article class="panel span-6">
+          <h3 class="section-title">Rendimentos fixos</h3>
+          <form id="form-rendimento-fixo">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="rf-descricao">Descrição</label>
+                <input id="rf-descricao" type="text" placeholder="Ex.: Salário Gabriel" />
+              </div>
+              <div class="field">
+                <label for="rf-valor">Valor</label>
+                <input id="rf-valor" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="rf-dia">Dia do recebimento</label>
+                <input id="rf-dia" type="number" min="1" max="31" />
+              </div>
+              <div class="field span-2">
+                <label for="rf-responsavel">Responsável</label>
+                <select id="rf-responsavel"></select>
+              </div>
+            </div>
+            <div class="actions-row">
+              <span class="subtle">Entradas fixas contam todos os meses.</span>
+              <button class="btn btn-primary" type="submit">Adicionar rendimento</button>
+            </div>
+          </form>
+
+          <div style="margin-top: 20px;">
+            <div id="rf-lista" class="list"></div>
+          </div>
+        </article>
+
+        <article class="panel span-6">
+          <h3 class="section-title">Renda variável da Meiry</h3>
+          <form id="form-rendimento-variavel">
+            <div class="form-grid">
+              <div class="field">
+                <label for="rv-mes">Mês</label>
+                <input id="rv-mes" type="month" />
+              </div>
+              <div class="field">
+                <label for="rv-valor">Valor</label>
+                <input id="rv-valor" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field span-2">
+                <label for="rv-descricao">Descrição</label>
+                <input id="rv-descricao" type="text" placeholder="Ex.: Comissão, extra" />
+              </div>
+            </div>
+            <div class="actions-row">
+              <span class="subtle">Sempre vinculado à Meiry.</span>
+              <button class="btn btn-primary" type="submit">Salvar renda variável</button>
+            </div>
+          </form>
+
+          <div style="margin-top: 20px;">
+            <div id="rv-lista" class="list"></div>
+          </div>
+        </article>
+      </section>
+    `;
+  },
+
+  renderSaudeScreen() {
+    const el = document.getElementById('screen-saude');
+    if (!el) return;
+
+    el.innerHTML = `
+      <section class="hero">
+        <div>
+          <h2>Saúde financeira</h2>
+          <p>Veja o quanto do orçamento está comprometido e como os últimos meses evoluíram.</p>
+        </div>
+        ${this._monthNav()}
+      </section>
+
+      <section class="section-grid">
+        <article class="panel span-5">
+          <h3 class="section-title">Indicadores</h3>
+          <div id="saude-indicadores" class="list"></div>
+        </article>
+        <article class="panel span-7">
+          <h3 class="section-title">Histórico recente</h3>
+          <p class="subtle">Comparativo dos últimos 6 meses com despesas e compras no cartão.</p>
+          <div id="saude-historico" class="list"></div>
+        </article>
+      </section>
+    `;
+  },
+
+  _monthNav() {
+    return `
+      <div class="month-nav">
+        <button type="button" class="btn-icon" onclick="State.navegarMes(-1)">‹</button>
+        <strong class="mes-ref-label">${Utils.mesRefLabel(State?.mesRef || Utils.mesAtual())}</strong>
+        <button type="button" class="btn-icon" onclick="State.navegarMes(1)">›</button>
       </div>
     `;
   },
 
-  _saude() {
-    return `
-      <div id="screen-saude" data-screen class="hidden">
-        <div class="mb-6">
-          <h1 class="font-display font-bold text-2xl text-gray-900">Saude Financeira</h1>
-          <p class="text-sm text-gray-400 mt-0.5">Analise completa e encaminhamentos para sua familia</p>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6 mobile-card">
-          <h3 class="font-display font-semibold text-base text-gray-800 mb-4">📋 Diagnostico do mes</h3>
-          <div id="saude-insights"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6 tablet-stack">
-          <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-            <h3 class="font-display font-semibold text-base text-gray-800 mb-4">💰 Quanto guardar por mes</h3>
-            <div id="saude-poupanca"></div>
-          </div>
-          <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-            <h3 class="font-display font-semibold text-base text-gray-800 mb-4">🎯 Quanto precisa ganhar</h3>
-            <div id="saude-meta-renda"></div>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6 mobile-card">
-          <h3 class="font-display font-semibold text-base text-gray-800 mb-4">📈 Encaminhamento de investimentos</h3>
-          <div id="saude-investimentos"></div>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mobile-card">
-          <h3 class="font-display font-semibold text-base text-gray-800 mb-4">🗓 Historico de meses</h3>
-          <div id="saude-historico"></div>
-        </div>
-      </div>
-    `;
+  _navLink(href, icon, label) {
+    return `<a href="${href}" data-nav-link class="nav-link"><span>${icon}</span><span>${label}</span></a>`;
   },
 };
 

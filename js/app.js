@@ -22,10 +22,9 @@ const App = {
     try {
       await DB.bootstrap();
       await State.carregarTudo();
-      this._renderNav();
       this._rotear();
     } catch (error) {
-      console.error('Erro ao iniciar a aplicacao:', error);
+      console.error('Erro ao iniciar a aplicação:', error);
       this._mostrarErroInicial(error);
     }
   },
@@ -42,25 +41,22 @@ const App = {
     document.querySelectorAll('[data-nav-link]').forEach(el => {
       const ativo = el.getAttribute('href') === hash;
       el.classList.toggle('nav-active', ativo);
-      el.classList.toggle('text-emerald-600', ativo);
-      el.classList.toggle('font-semibold', ativo);
-      el.classList.toggle('text-gray-600', !ativo);
     });
 
-    document.querySelectorAll('[data-screen]').forEach(screen => screen.classList.add('hidden'));
+    document.querySelectorAll('[data-screen]').forEach(screen => {
+      screen.classList.add('hidden');
+      screen.classList.remove('is-visible');
+    });
+
     const screenId = hash.replace('#', 'screen-');
     const screen = document.getElementById(screenId);
-    if (screen) screen.classList.remove('hidden');
+    if (screen) {
+      screen.classList.remove('hidden');
+      screen.classList.add('is-visible');
+    }
 
     this._rotaAtual = hash;
     fn();
-  },
-
-  _renderNav() {
-    const el = document.getElementById('nav-user-nome');
-    if (!el) return;
-
-    el.textContent = State.perfil?.nome || 'Minha casa';
   },
 
   _registrarOuvintes() {
@@ -76,8 +72,6 @@ const App = {
       const el = document.getElementById('loading-global');
       if (el) el.classList.toggle('hidden', !ativo);
     });
-
-    State.on('perfil-updated', () => this._renderNav());
   },
 
   _mostrarErroInicial(error) {
@@ -87,20 +81,20 @@ const App = {
     const mensagem = error?.message || 'Falha ao conectar ao banco de dados.';
 
     main.innerHTML = `
-      <section class="max-w-3xl mx-auto py-8">
-        <div class="bg-white rounded-2xl border border-red-200 p-6 shadow-sm mobile-card">
-          <div class="flex items-start gap-3">
-            <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl flex-shrink-0">!</div>
+      <section class="container" style="padding-top: 32px;">
+        <div class="panel">
+          <div class="item-row" style="align-items: flex-start;">
+            <div class="icon-chip" style="color: var(--danger);">!</div>
             <div>
-              <h1 class="font-display text-xl font-semibold text-gray-900">Nao foi possivel carregar os dados</h1>
-              <p class="text-sm text-gray-500 mt-2">
-                O app abriu, mas nao conseguiu concluir a conexao com o Supabase.
+              <h1 class="section-title">Não foi possível carregar os dados</h1>
+              <p class="subtle" style="margin-top: 8px;">
+                O app abriu, mas não conseguiu concluir a conexão com o Supabase.
               </p>
-              <p class="text-sm text-gray-700 mt-4"><strong>Erro:</strong> ${mensagem}</p>
-              <div class="mt-5 space-y-2 text-sm text-gray-600">
-                <p>Verifique se voce executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
-                <p>Confirme tambem se a URL e a chave em <code>js/config.js</code> estao corretas.</p>
-                <p>Depois de corrigir, recarregue a pagina.</p>
+              <p style="margin-top: 14px;"><strong>Erro:</strong> ${mensagem}</p>
+              <div class="subtle" style="margin-top: 16px; display: grid; gap: 6px;">
+                <p>Verifique se você executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
+                <p>Confirme também se a URL e a chave em <code>js/config.js</code> estão corretas.</p>
+                <p>Depois de corrigir, recarregue a página.</p>
               </div>
             </div>
           </div>

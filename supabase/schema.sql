@@ -25,7 +25,7 @@ create table if not exists public.rendimentos_variaveis (
   familia_id uuid not null references public.familias(id) on delete cascade,
   mes_ref text not null,
   valor numeric(12,2) not null check (valor >= 0),
-  responsavel text not null default 'esposa',
+  responsavel text not null default 'meiry',
   descricao text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
@@ -40,8 +40,9 @@ create table if not exists public.despesas (
   categoria text not null,
   data date not null,
   mes_ref text not null,
-  responsavel text not null default 'familia',
+  responsavel text not null default 'gabriel',
   fixa boolean not null default false,
+  recorrencia_ate date,
   observacao text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -77,6 +78,10 @@ create index if not exists idx_rendimentos_variaveis_familia_mes on public.rendi
 create index if not exists idx_despesas_familia_mes on public.despesas(familia_id, mes_ref);
 create index if not exists idx_cartoes_familia on public.cartoes(familia_id);
 create index if not exists idx_compras_cartao_familia_mes on public.compras_cartao(familia_id, mes_ref);
+
+alter table public.rendimentos_variaveis alter column responsavel set default 'meiry';
+alter table public.despesas alter column responsavel set default 'gabriel';
+alter table public.despesas add column if not exists recorrencia_ate date;
 
 create or replace function public.set_updated_at()
 returns trigger

@@ -11,6 +11,7 @@ const PageCartoes = {
     this._setDataHoje();
     this._bindFormCartao();
     this._bindFormCompra();
+    this._atualizarMes();
   },
 
   _renderCartoes() {
@@ -18,29 +19,23 @@ const PageCartoes = {
     if (!el) return;
 
     if (!State.cartoes.length) {
-      el.innerHTML = `<p class="text-gray-400 text-sm text-center py-6">Nenhum cartao cadastrado</p>`;
+      el.innerHTML = `<div class="empty-state">Nenhum cartão cadastrado.</div>`;
       return;
     }
 
-    el.innerHTML = State.cartoes.map(c => {
+    el.innerHTML = State.cartoes.map(item => {
       const gastoMes = State.compras
-        .filter(p => p.cartao_id === c.id)
-        .reduce((s, p) => s + Utils.valorParcelaMes(p, State.mesRef), 0);
+        .filter(compra => compra.cartao_id === item.id)
+        .reduce((acc, compra) => acc + Utils.valorParcelaMes(compra, State.mesRef), 0);
 
       return `
-        <div class="border border-gray-100 rounded-xl p-4 mb-3 bg-gradient-to-br from-white to-emerald-50/60">
-          <div class="flex items-start justify-between">
-            <div>
-              <p class="font-semibold text-gray-800">${c.nome}</p>
-              <p class="text-xs text-gray-400 mt-0.5">${c.empresa || 'Empresa nao informada'}</p>
-            </div>
-            <button onclick="PageCartoes._deletarCartao('${c.id}')" class="text-gray-300 hover:text-red-400 transition-colors text-xl leading-none ml-2" title="Remover cartao">×</button>
+        <div class="item-row">
+          <div class="item-main">
+            <p class="item-title">${Utils.escapeHtml(item.nome)}</p>
+            <p class="item-meta">${Utils.escapeHtml(item.empresa || 'Empresa não informada')}</p>
+            <span class="badge">Impacto no mês: ${Utils.fmtMoeda(gastoMes)}</span>
           </div>
-
-          <div class="mt-4 rounded-xl bg-white/80 border border-emerald-100 px-3 py-2">
-            <p class="text-xs text-gray-500">Impacto das parcelas neste mes</p>
-            <p class="text-base font-semibold text-gray-800 mt-0.5">${Utils.fmtMoeda(gastoMes)}</p>
-          </div>
+          <button type="button" class="btn-icon" onclick="PageCartoes._deletarCartao('${item.id}')">×</button>
         </div>
       `;
     }).join('');
@@ -50,41 +45,37 @@ const PageCartoes = {
     const el = document.getElementById('cc-lista-compras');
     if (!el) return;
 
-    if (!State.compras.length) {
-      el.innerHTML = `
-        <div class="text-center py-12 text-gray-400">
-          <p class="text-4xl mb-3">💳</p>
-          <p class="text-sm">Nenhuma compra registrada</p>
-        </div>
-      `;
+    const itens = [...State.compras]
+      .filter(item => Utils.valorParcelaMes(item, State.mesRef) > 0)
+      .sort((a, b) => new Date(b.data_compra) - new Date(a.data_compra));
+
+    if (!itens.length) {
+      el.innerHTML = `<div class="empty-state">Nenhuma compra registrada.</div>`;
       return;
     }
 
-    const sorted = [...State.compras].sort((a, b) => new Date(b.data_compra) - new Date(a.data_compra));
-
-    el.innerHTML = sorted.map(c => {
-      const parcelaMes = Utils.valorParcelaMes(c, State.mesRef);
-      const cartaoNome = c.cartoes?.nome || 'Cartao';
-      const cartaoEmpresa = c.cartoes?.empresa || '';
+    el.innerHTML = itens.map(item => {
+      const parcelaMes = Utils.valorParcelaMes(item, State.mesRef);
+      const cartaoNome = item.cartoes?.nome || 'Cartão';
+      const cartaoEmpresa = item.cartoes?.empresa ? ` · ${item.cartoes.empresa}` : '';
 
       return `
-        <div class="flex items-start justify-between py-3 border-b border-gray-50 last:border-0 group">
-          <div class="flex items-start gap-3">
-            <span class="text-xl mt-0.5">${Utils.iconeCategoria(c.categoria)}</span>
-            <div>
-              <p class="text-sm font-medium text-gray-800">
-                ${c.descricao}
-                ${c.parcelas > 1
-                  ? `<span class="ml-1 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">${c.parcelas}x de ${Utils.fmtMoeda(c.valor_total / c.parcelas)}</span>`
-                  : '<span class="ml-1 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">a vista</span>'}
-              </p>
-              <p class="text-xs text-gray-400 mt-0.5">${cartaoNome}${cartaoEmpresa ? ` · ${cartaoEmpresa}` : ''} · ${c.categoria} · ${Utils.fmtData(c.data_compra)}</p>
-              ${parcelaMes > 0 ? `<p class="text-xs text-blue-600 mt-0.5">Impacto neste mes: ${Utils.fmtMoeda(parcelaMes)}</p>` : ''}
-            </div>
+        <div class="item-row">
+          <div class="item-main">
+            <p class="item-title">${Utils.escapeHtml(item.descricao)}</p>
+            <p class="item-meta">
+              ${Utils.iconeCategoria(item.categoria)} ${Utils.escapeHtml(item.categoria)} ·
+              💳 ${Utils.escapeHtml(cartaoNome)}${Utils.escapeHtml(cartaoEmpresa)} ·
+              ${Utils.fmtData(item.data_compra)}
+            </p>
+            <p class="item-meta">
+              ${item.parcelas > 1 ? `${item.parcelas}x de ${Utils.fmtMoeda(item.valor_total / item.parcelas)}` : 'À vista'}
+              · Impacto no mês: ${Utils.fmtMoeda(parcelaMes)}
+            </p>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-semibold text-gray-700">${Utils.fmtMoeda(c.valor_total)}</span>
-            <button onclick="PageCartoes._deletarCompra('${c.id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400 text-lg leading-none" title="Remover compra">×</button>
+          <div class="item-actions">
+            <strong>${Utils.fmtMoeda(item.valor_total)}</strong>
+            <button type="button" class="btn-icon" onclick="PageCartoes._deletarCompra('${item.id}')">×</button>
           </div>
         </div>
       `;
@@ -92,26 +83,25 @@ const PageCartoes = {
   },
 
   _populaSelectCartoes() {
-    const sel = document.getElementById('cc-compra-cartao');
-    if (!sel) return;
+    const select = document.getElementById('cc-compra-cartao');
+    if (!select) return;
 
     if (!State.cartoes.length) {
-      sel.innerHTML = `<option value="">— Cadastre um cartao primeiro —</option>`;
+      select.innerHTML = `<option value="">Cadastre um cartão primeiro</option>`;
       return;
     }
 
-    sel.innerHTML = State.cartoes
-      .map(c => `<option value="${c.id}">${c.nome} - ${c.empresa || 'Sem empresa'}</option>`)
+    select.innerHTML = State.cartoes
+      .map(item => `<option value="${item.id}">${item.nome} - ${item.empresa || 'Sem empresa'}</option>`)
       .join('');
   },
 
   _populaCategorias() {
-    const sel = document.getElementById('cc-compra-categoria');
-    if (!sel) return;
-
-    sel.innerHTML = Utils.CATEGORIAS_DESPESA.map(c => `
-      <option value="${c.nome}">${c.icone} ${c.nome}</option>
-    `).join('');
+    const select = document.getElementById('cc-compra-categoria');
+    if (!select) return;
+    select.innerHTML = Utils.CATEGORIAS_DESPESA
+      .map(item => `<option value="${item.nome}">${item.icone} ${item.nome}</option>`)
+      .join('');
   },
 
   _setDataHoje() {
@@ -124,29 +114,29 @@ const PageCartoes = {
     if (!form || this._formCartaoBound) return;
     this._formCartaoBound = true;
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const btn = form.querySelector('button[type=submit]');
-      const dados = {
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const botao = form.querySelector('button[type="submit"]');
+      const payload = {
         nome: document.getElementById('cc-nome').value.trim(),
         empresa: document.getElementById('cc-empresa').value.trim(),
       };
 
-      if (!dados.nome) return Utils.toast('Informe o nome do cartao', 'warn');
-      if (!dados.empresa) return Utils.toast('Informe a empresa do cartao', 'warn');
+      if (!payload.nome) return Utils.toast('Informe o nome do cartão.', 'warn');
+      if (!payload.empresa) return Utils.toast('Informe a empresa do cartão.', 'warn');
 
-      Utils.setLoading(btn, true);
+      Utils.setLoading(botao, true, 'Adicionar cartão');
       try {
-        const novo = await DB.addCartao(dados);
+        const novo = await DB.addCartao(payload);
         State.cartoes.push(novo);
         this._renderCartoes();
         this._populaSelectCartoes();
         form.reset();
-        Utils.toast('Cartao adicionado!');
-      } catch (err) {
-        Utils.toast(err.message, 'error');
+        Utils.toast('Cartão adicionado.');
+      } catch (error) {
+        Utils.toast(error.message, 'error');
       } finally {
-        Utils.setLoading(btn, false, 'Adicionar cartao');
+        Utils.setLoading(botao, false, 'Adicionar cartão');
       }
     });
   },
@@ -156,10 +146,10 @@ const PageCartoes = {
     if (!form || this._formCompraBound) return;
     this._formCompraBound = true;
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const btn = form.querySelector('button[type=submit]');
-      const dados = {
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const botao = form.querySelector('button[type="submit"]');
+      const payload = {
         cartao_id: document.getElementById('cc-compra-cartao').value,
         descricao: document.getElementById('cc-compra-descricao').value.trim(),
         valor_total: parseFloat(document.getElementById('cc-compra-valor').value),
@@ -169,28 +159,28 @@ const PageCartoes = {
         observacao: document.getElementById('cc-compra-obs').value.trim() || null,
       };
 
-      if (!dados.cartao_id) return Utils.toast('Selecione um cartao', 'warn');
-      if (!dados.descricao) return Utils.toast('Informe a descricao', 'warn');
-      if (!dados.valor_total || dados.valor_total <= 0) return Utils.toast('Valor invalido', 'warn');
-      if (!dados.data_compra) return Utils.toast('Informe a data', 'warn');
+      if (!payload.cartao_id) return Utils.toast('Selecione um cartão.', 'warn');
+      if (!payload.descricao) return Utils.toast('Informe a descrição da compra.', 'warn');
+      if (!payload.valor_total || payload.valor_total <= 0) return Utils.toast('Informe um valor válido.', 'warn');
+      if (!payload.data_compra) return Utils.toast('Informe a data da compra.', 'warn');
 
-      Utils.setLoading(btn, true);
+      Utils.setLoading(botao, true, 'Registrar compra');
       try {
-        const nova = await DB.addCompraCartao(dados);
+        const nova = await DB.addCompraCartao(payload);
         State.compras.unshift(nova);
         State.allCompras.unshift(nova);
         this._renderCompras();
         this._renderCartoes();
-        State.emit('mes-changed');
         form.reset();
         document.getElementById('cc-compra-data').value = Utils.hoje();
         document.getElementById('cc-compra-parcelas').value = '1';
         document.getElementById('cc-parcela-preview')?.classList.add('hidden');
-        Utils.toast('Compra registrada!');
-      } catch (err) {
-        Utils.toast(err.message, 'error');
+        State.emit('mes-changed');
+        Utils.toast('Compra registrada.');
+      } catch (error) {
+        Utils.toast(error.message, 'error');
       } finally {
-        Utils.setLoading(btn, false, 'Registrar compra');
+        Utils.setLoading(botao, false, 'Registrar compra');
       }
     });
 
@@ -199,12 +189,12 @@ const PageCartoes = {
 
     const calcParcela = () => {
       const total = parseFloat(document.getElementById('cc-compra-valor').value) || 0;
-      const parc = parseInt(document.getElementById('cc-compra-parcelas').value, 10) || 1;
+      const parcelas = parseInt(document.getElementById('cc-compra-parcelas').value, 10) || 1;
       const preview = document.getElementById('cc-parcela-preview');
       if (!preview) return;
 
       if (total > 0) {
-        preview.textContent = parc > 1 ? `${parc}x de ${Utils.fmtMoeda(total / parc)}` : `A vista: ${Utils.fmtMoeda(total)}`;
+        preview.textContent = parcelas > 1 ? `${parcelas}x de ${Utils.fmtMoeda(total / parcelas)}` : `À vista: ${Utils.fmtMoeda(total)}`;
         preview.classList.remove('hidden');
       } else {
         preview.classList.add('hidden');
@@ -215,33 +205,39 @@ const PageCartoes = {
     document.getElementById('cc-compra-parcelas')?.addEventListener('change', calcParcela);
   },
 
+  _atualizarMes() {
+    document.querySelectorAll('.mes-ref-label').forEach(el => {
+      el.textContent = Utils.mesRefLabel(State.mesRef);
+    });
+  },
+
   async _deletarCartao(id) {
-    if (!confirm('Remover este cartao? As compras associadas serao mantidas.')) return;
+    if (!window.confirm('Remover este cartão?')) return;
 
     try {
       await DB.deleteCartao(id);
-      State.cartoes = State.cartoes.filter(c => c.id !== id);
+      State.cartoes = State.cartoes.filter(item => item.id !== id);
       this._renderCartoes();
       this._populaSelectCartoes();
-      Utils.toast('Cartao removido', 'info');
-    } catch (err) {
-      Utils.toast(err.message, 'error');
+      Utils.toast('Cartão removido.');
+    } catch (error) {
+      Utils.toast(error.message, 'error');
     }
   },
 
   async _deletarCompra(id) {
-    if (!confirm('Remover esta compra?')) return;
+    if (!window.confirm('Remover esta compra?')) return;
 
     try {
       await DB.deleteCompraCartao(id);
-      State.compras = State.compras.filter(c => c.id !== id);
-      State.allCompras = State.allCompras.filter(c => c.id !== id);
+      State.compras = State.compras.filter(item => item.id !== id);
+      State.allCompras = State.allCompras.filter(item => item.id !== id);
       this._renderCompras();
       this._renderCartoes();
       State.emit('mes-changed');
-      Utils.toast('Compra removida', 'info');
-    } catch (err) {
-      Utils.toast(err.message, 'error');
+      Utils.toast('Compra removida.');
+    } catch (error) {
+      Utils.toast(error.message, 'error');
     }
   },
 };
