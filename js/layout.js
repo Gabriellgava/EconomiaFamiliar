@@ -176,12 +176,20 @@ const Layout = {
       <section class="hero">
         <div>
           <h2>Cart&otilde;es</h2>
-          <p>Cadastre apenas o nome do cart&atilde;o e a empresa emissora.</p>
+          <p>Separe cadastro, lan&ccedil;amentos e consulta de despesas em telas pr&oacute;prias.</p>
         </div>
         ${this._monthNav()}
       </section>
 
-      <section class="section-grid">
+      <section class="panel">
+        <div class="subnav" id="cc-subnav">
+          <button type="button" class="subnav-button" data-cc-view="cadastro">Cadastrar cart&otilde;es</button>
+          <button type="button" class="subnav-button" data-cc-view="lancamentos">Lan&ccedil;ar despesas</button>
+          <button type="button" class="subnav-button" data-cc-view="consulta">Consultar despesas</button>
+        </div>
+      </section>
+
+      <section id="cc-view-cadastro" class="section-grid" data-cc-screen>
         <article class="panel span-5">
           <h3 class="section-title">Novo cart&atilde;o</h3>
           <form id="form-cartao">
@@ -196,61 +204,83 @@ const Layout = {
               </div>
             </div>
             <div class="actions-row">
-              <span class="subtle">Voc&ecirc; pode usar o nome que fizer mais sentido para voc&ecirc;s.</span>
+              <span class="subtle">Cadastre aqui apenas o nome e a empresa emissora.</span>
               <button class="btn btn-primary" type="submit">Adicionar cart&atilde;o</button>
             </div>
           </form>
-
-          <div class="panel-subsection">
-            <h3 class="section-title">Registrar compra</h3>
-            <form id="form-compra-cc">
-              <div class="form-grid">
-                <div class="field span-2">
-                  <label for="cc-compra-cartao">Cart&atilde;o</label>
-                  <select id="cc-compra-cartao"></select>
-                </div>
-                <div class="field span-2">
-                  <label for="cc-compra-descricao">Descri&ccedil;&atilde;o</label>
-                  <input id="cc-compra-descricao" type="text" />
-                </div>
-                <div class="field">
-                  <label for="cc-compra-valor">Valor total</label>
-                  <input id="cc-compra-valor" type="number" min="0" step="0.01" />
-                </div>
-                <div class="field">
-                  <label for="cc-compra-parcelas">Parcelas</label>
-                  <select id="cc-compra-parcelas">
-                    ${Array.from({ length: 24 }, (_, i) => `<option value="${i + 1}">${i + 1}x</option>`).join('')}
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="cc-compra-categoria">Categoria</label>
-                  <select id="cc-compra-categoria"></select>
-                </div>
-                <div class="field">
-                  <label for="cc-compra-data">Data da compra</label>
-                  <input id="cc-compra-data" type="date" />
-                </div>
-                <div class="field span-2">
-                  <label for="cc-compra-obs">Observa&ccedil;&atilde;o</label>
-                  <textarea id="cc-compra-obs" rows="3"></textarea>
-                </div>
-              </div>
-              <div class="actions-row">
-                <span id="cc-parcela-preview" class="badge hidden"></span>
-                <button class="btn btn-primary" type="submit">Registrar compra</button>
-              </div>
-            </form>
-          </div>
         </article>
 
         <article class="panel span-7">
           <h3 class="section-title">Cart&otilde;es cadastrados</h3>
           <div id="cc-lista-cartoes" class="list"></div>
+        </article>
+      </section>
+
+      <section id="cc-view-lancamentos" class="section-grid hidden" data-cc-screen>
+        <article class="panel span-6">
+          <h3 class="section-title">Registrar despesa no cart&atilde;o</h3>
+          <form id="form-compra-cc">
+            <div class="form-grid">
+              <div class="field span-2">
+                <label for="cc-compra-cartao">Cart&atilde;o</label>
+                <select id="cc-compra-cartao"></select>
+              </div>
+              <div class="field span-2">
+                <label for="cc-compra-descricao">Descri&ccedil;&atilde;o</label>
+                <input id="cc-compra-descricao" type="text" />
+              </div>
+              <div class="field">
+                <label for="cc-compra-valor">Valor total</label>
+                <input id="cc-compra-valor" type="number" min="0" step="0.01" />
+              </div>
+              <div class="field">
+                <label for="cc-compra-parcelas">Parcelas</label>
+                <select id="cc-compra-parcelas">
+                  ${Array.from({ length: 24 }, (_, i) => `<option value="${i + 1}">${i + 1}x</option>`).join('')}
+                </select>
+              </div>
+              <div class="field">
+                <label for="cc-compra-categoria">Categoria</label>
+                <select id="cc-compra-categoria"></select>
+              </div>
+              <div class="field">
+                <label for="cc-compra-data">Data da compra</label>
+                <input id="cc-compra-data" type="date" />
+              </div>
+              <div class="field span-2">
+                <label for="cc-compra-obs">Observa&ccedil;&atilde;o</label>
+                <textarea id="cc-compra-obs" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="actions-row">
+              <span id="cc-parcela-preview" class="badge hidden"></span>
+              <button class="btn btn-primary" type="submit">Registrar compra</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="panel span-6">
+          <h3 class="section-title">Resumo do m&ecirc;s</h3>
+          <p class="subtle">Impacto das parcelas registradas no m&ecirc;s selecionado.</p>
+          <div id="cc-resumo-mes" class="list"></div>
+        </article>
+      </section>
+
+      <section id="cc-view-consulta" class="section-grid hidden" data-cc-screen>
+        <article class="panel span-12">
+          <h3 class="section-title">Consulta de despesas no cart&atilde;o</h3>
+          <div class="filters-row">
+            <div class="field">
+              <label for="cc-filtro-cartao">Filtrar por cart&atilde;o</label>
+              <select id="cc-filtro-cartao"></select>
+            </div>
+          </div>
 
           <div class="section-block">
-            <h3 class="section-title">Compras do m&ecirc;s</h3>
-            <p class="subtle">Parcelas que impactam o m&ecirc;s selecionado.</p>
+            <div id="cc-resumo-consulta" class="list"></div>
+          </div>
+
+          <div class="section-block">
             <div id="cc-lista-compras" class="list"></div>
           </div>
         </article>
