@@ -1,0 +1,116 @@
+const App = {
+  _rotas: {
+    '#dashboard': () => PageDashboard.init(),
+    '#despesas': () => PageDespesas.init(),
+    '#cartoes': () => PageCartoes.init(),
+    '#rendimentos': () => PageRendimentos.init(),
+    '#saude': () => PageSaude.init(),
+  },
+
+  _rotaAtual: null,
+  _listenersRegistrados: false,
+  _themeKey: 'familia-financas-theme',
+
+  async init() {
+    this._aplicarTemaSalvo();
+    Layout.renderAppShell();
+    this._bindThemeToggle();
+
+    window.addEventListener('hashchange', () => this._rotear());
+
+    this._registrarOuvintes();
+
+    await DB.bootstrap();
+    await State.carregarTudo();
+    this._renderNav();
+    this._rotear();
+  },
+
+  _rotear() {
+    const hash = window.location.hash || '#dashboard';
+    const fn = this._rotas[hash];
+
+    if (!fn) {
+      window.location.hash = '#dashboard';
+      return;
+    }
+
+    document.querySelectorAll('[data-nav-link]').forEach(el => {
+      const ativo = el.getAttribute('href') === hash;
+      el.classList.toggle('nav-active', ativo);
+      el.classList.toggle('text-emerald-600', ativo);
+      el.classList.toggle('font-semibold', ativo);
+      el.classList.toggle('text-gray-600', !ativo);
+    });
+
+    document.querySelectorAll('[data-screen]').forEach(screen => screen.classList.add('hidden'));
+    const screenId = hash.replace('#', 'screen-');
+    const screen = document.getElementById(screenId);
+    if (screen) screen.classList.remove('hidden');
+
+    this._rotaAtual = hash;
+    fn();
+  },
+
+  _renderNav() {
+    const el = document.getElementById('nav-user-nome');
+    if (!el) return;
+
+    el.textContent = State.perfil?.nome || 'Minha casa';
+  },
+
+  _registrarOuvintes() {
+    if (this._listenersRegistrados) return;
+    this._listenersRegistrados = true;
+
+    State.on('mes-changed', () => {
+      const fn = this._rotas[this._rotaAtual];
+      if (fn) fn();
+    });
+
+    State.on('loading', ativo => {
+      const el = document.getElementById('loading-global');
+      if (el) el.classList.toggle('hidden', !ativo);
+    });
+
+    State.on('perfil-updated', () => this._renderNav());
+  },
+
+  _aplicarTemaSalvo() {
+    const salvo = window.localStorage.getItem(this._themeKey);
+    const tema = salvo || 'light';
+    this._definirTema(tema, false);
+  },
+
+  _bindThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+
+    this._atualizarToggleTema();
+
+    btn.addEventListener('click', () => {
+      const atual = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      const proximo = atual === 'dark' ? 'light' : 'dark';
+      this._definirTema(proximo, true);
+    });
+  },
+
+  _definirTema(tema, persistir = true) {
+    document.documentElement.dataset.theme = tema;
+    if (persistir) {
+      window.localStorage.setItem(this._themeKey, tema);
+    }
+    this._atualizarToggleTema();
+  },
+
+  _atualizarToggleTema() {
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    const label = document.getElementById('theme-toggle-label');
+    const icon = document.getElementById('theme-toggle-icon');
+    if (label) label.textContent = isDark ? 'Modo claro' : 'Modo escuro';
+    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+  },
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+window.App = App;
