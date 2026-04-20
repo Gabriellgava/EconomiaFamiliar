@@ -17,13 +17,17 @@ const App = {
     this._bindThemeToggle();
 
     window.addEventListener('hashchange', () => this._rotear());
-
     this._registrarOuvintes();
 
-    await DB.bootstrap();
-    await State.carregarTudo();
-    this._renderNav();
-    this._rotear();
+    try {
+      await DB.bootstrap();
+      await State.carregarTudo();
+      this._renderNav();
+      this._rotear();
+    } catch (error) {
+      console.error('Erro ao iniciar a aplicacao:', error);
+      this._mostrarErroInicial(error);
+    }
   },
 
   _rotear() {
@@ -74,6 +78,35 @@ const App = {
     });
 
     State.on('perfil-updated', () => this._renderNav());
+  },
+
+  _mostrarErroInicial(error) {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const mensagem = error?.message || 'Falha ao conectar ao banco de dados.';
+
+    main.innerHTML = `
+      <section class="max-w-3xl mx-auto py-8">
+        <div class="bg-white rounded-2xl border border-red-200 p-6 shadow-sm mobile-card">
+          <div class="flex items-start gap-3">
+            <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-xl flex-shrink-0">!</div>
+            <div>
+              <h1 class="font-display text-xl font-semibold text-gray-900">Nao foi possivel carregar os dados</h1>
+              <p class="text-sm text-gray-500 mt-2">
+                O app abriu, mas nao conseguiu concluir a conexao com o Supabase.
+              </p>
+              <p class="text-sm text-gray-700 mt-4"><strong>Erro:</strong> ${mensagem}</p>
+              <div class="mt-5 space-y-2 text-sm text-gray-600">
+                <p>Verifique se voce executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
+                <p>Confirme tambem se a URL e a chave em <code>js/config.js</code> estao corretas.</p>
+                <p>Depois de corrigir, recarregue a pagina.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    `;
   },
 
   _aplicarTemaSalvo() {
