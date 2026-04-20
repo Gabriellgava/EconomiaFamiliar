@@ -24,7 +24,7 @@ const App = {
       await State.carregarTudo();
       this._rotear();
     } catch (error) {
-      console.error('Erro ao iniciar a aplicação:', error);
+      console.error('Erro ao iniciar a aplicacao:', error);
       this._mostrarErroInicial(error);
     }
   },
@@ -86,15 +86,15 @@ const App = {
           <div class="item-row" style="align-items: flex-start;">
             <div class="icon-chip" style="color: var(--danger);">!</div>
             <div>
-              <h1 class="section-title">Não foi possível carregar os dados</h1>
+              <h1 class="section-title">Nao foi possivel carregar os dados</h1>
               <p class="subtle" style="margin-top: 8px;">
-                O app abriu, mas não conseguiu concluir a conexão com o Supabase.
+                O app abriu, mas nao conseguiu concluir a conexao com o Supabase.
               </p>
               <p style="margin-top: 14px;"><strong>Erro:</strong> ${mensagem}</p>
               <div class="subtle" style="margin-top: 16px; display: grid; gap: 6px;">
-                <p>Verifique se você executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
-                <p>Confirme também se a URL e a chave em <code>js/config.js</code> estão corretas.</p>
-                <p>Depois de corrigir, recarregue a página.</p>
+                <p>Verifique se voce executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
+                <p>Confirme tambem se a URL e a chave em <code>js/config.js</code> estao corretas.</p>
+                <p>Depois de corrigir, recarregue a pagina.</p>
               </div>
             </div>
           </div>
@@ -135,7 +135,7 @@ const App = {
     const label = document.getElementById('theme-toggle-label');
     const icon = document.getElementById('theme-toggle-icon');
     if (label) label.textContent = isDark ? 'Modo claro' : 'Modo escuro';
-    if (icon) icon.textContent = isDark ? '☀️' : '🌙';
+    if (icon) icon.innerHTML = isDark ? '&#9728;' : '&#9790;';
   },
 };
 

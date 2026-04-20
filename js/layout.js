@@ -9,11 +9,11 @@ const Layout = {
           <div class="container header-inner">
             <div>
               <h1 class="brand-title">Economia Familiar</h1>
-              <p class="brand-subtitle">Organização financeira simples para Gabriel e Meiry.</p>
+              <p class="brand-subtitle">Organiza&ccedil;&atilde;o financeira simples para Gabriel e Meiry.</p>
             </div>
 
             <button id="theme-toggle" class="theme-toggle" type="button">
-              <span id="theme-toggle-icon" class="icon-chip">🌙</span>
+              <span id="theme-toggle-icon" class="icon-chip">&#9790;</span>
               <span id="theme-toggle-label">Modo escuro</span>
             </button>
           </div>
@@ -21,13 +21,13 @@ const Layout = {
 
         <main class="container main-grid">
           <aside class="sidebar">
-            <p class="nav-title">Navegação</p>
+            <p class="nav-title">Navega&ccedil;&atilde;o</p>
             <nav class="nav-list">
-              ${this._navLink('#dashboard', '📊', 'Painel')}
-              ${this._navLink('#despesas', '🧾', 'Despesas')}
-              ${this._navLink('#cartoes', '💳', 'Cartões')}
-              ${this._navLink('#rendimentos', '💰', 'Rendimentos')}
-              ${this._navLink('#saude', '❤️', 'Saúde financeira')}
+              ${this._navLink('#dashboard', 'Painel')}
+              ${this._navLink('#despesas', 'Despesas')}
+              ${this._navLink('#cartoes', 'Cart&otilde;es')}
+              ${this._navLink('#rendimentos', 'Rendimentos')}
+              ${this._navLink('#saude', 'Sa&uacute;de financeira')}
             </nav>
           </aside>
 
@@ -59,8 +59,8 @@ const Layout = {
     el.innerHTML = `
       <section class="hero">
         <div>
-          <h2>Visão geral do mês</h2>
-          <p>Acompanhe entradas, despesas e o impacto das compras no cartão.</p>
+          <h2>Vis&atilde;o geral do m&ecirc;s</h2>
+          <p>Acompanhe entradas, despesas e o impacto das compras no cart&atilde;o.</p>
         </div>
         ${this._monthNav()}
       </section>
@@ -71,15 +71,15 @@ const Layout = {
         <article class="panel span-7">
           <div class="actions-row">
             <div>
-              <h3 class="section-title">Resumo do mês</h3>
-              <p class="subtle">Entradas e saídas com atualização automática.</p>
+              <h3 class="section-title">Resumo do m&ecirc;s</h3>
+              <p class="subtle">Entradas e sa&iacute;das com atualiza&ccedil;&atilde;o autom&aacute;tica.</p>
             </div>
           </div>
           <div id="dashboard-resumo" class="list"></div>
         </article>
 
         <article class="panel span-5">
-          <h3 class="section-title">Últimos lançamentos</h3>
+          <h3 class="section-title">&Uacute;ltimos lan&ccedil;amentos</h3>
           <p class="subtle">Despesas e compras mais recentes.</p>
           <div id="dashboard-ultimos" class="list"></div>
         </article>
@@ -103,12 +103,12 @@ const Layout = {
       <section class="section-grid">
         <article class="panel span-5">
           <h3 class="section-title">Nova despesa</h3>
-          <p class="subtle">Use recorrência quando a despesa se repetir mês a mês.</p>
+          <p class="subtle">Use recorr&ecirc;ncia quando a despesa se repetir m&ecirc;s a m&ecirc;s.</p>
 
           <form id="form-despesa">
             <div class="form-grid">
               <div class="field span-2">
-                <label for="desp-descricao">Descrição</label>
+                <label for="desp-descricao">Descri&ccedil;&atilde;o</label>
                 <input id="desp-descricao" type="text" placeholder="Ex.: Aluguel, internet, mercado" />
               </div>
 
@@ -128,7 +128,7 @@ const Layout = {
               </div>
 
               <div class="field">
-                <label for="desp-responsavel">Responsável</label>
+                <label for="desp-responsavel">Respons&aacute;vel</label>
                 <select id="desp-responsavel"></select>
               </div>
 
@@ -141,13 +141,13 @@ const Layout = {
               </div>
 
               <div id="desp-recorrencia-wrap" class="field hidden">
-                <label for="desp-recorrencia-ate">Repetir até</label>
+                <label for="desp-recorrencia-ate">Repetir at&eacute;</label>
                 <input id="desp-recorrencia-ate" type="date" />
                 <small>Deixe em branco para continuar sem prazo final.</small>
               </div>
 
               <div class="field span-2">
-                <label for="desp-obs">Observação</label>
+                <label for="desp-obs">Observa&ccedil;&atilde;o</label>
                 <textarea id="desp-obs" rows="3" placeholder="Detalhes opcionais"></textarea>
               </div>
             </div>
@@ -160,8 +160,8 @@ const Layout = {
         </article>
 
         <article class="panel span-7">
-          <h3 class="section-title">Lançamentos do mês</h3>
-          <p class="subtle">Aqui aparecem as despesas ativas no mês selecionado.</p>
+          <h3 class="section-title">Lan&ccedil;amentos do m&ecirc;s</h3>
+          <p class="subtle">Aqui aparecem as despesas ativas no m&ecirc;s selecionado.</p>
           <div id="desp-lista" class="list"></div>
         </article>
       </section>
@@ -175,19 +175,19 @@ const Layout = {
     el.innerHTML = `
       <section class="hero">
         <div>
-          <h2>Cartões</h2>
-          <p>Cadastre apenas o nome do cartão e a empresa emissora.</p>
+          <h2>Cart&otilde;es</h2>
+          <p>Cadastre apenas o nome do cart&atilde;o e a empresa emissora.</p>
         </div>
         ${this._monthNav()}
       </section>
 
       <section class="section-grid">
         <article class="panel span-5">
-          <h3 class="section-title">Novo cartão</h3>
+          <h3 class="section-title">Novo cart&atilde;o</h3>
           <form id="form-cartao">
             <div class="form-grid">
               <div class="field span-2">
-                <label for="cc-nome">Nome do cartão</label>
+                <label for="cc-nome">Nome do cart&atilde;o</label>
                 <input id="cc-nome" type="text" placeholder="Ex.: Nubank, Mercado Pago" />
               </div>
               <div class="field span-2">
@@ -196,21 +196,21 @@ const Layout = {
               </div>
             </div>
             <div class="actions-row">
-              <span class="subtle">Você pode usar o nome que fizer mais sentido para vocês.</span>
-              <button class="btn btn-primary" type="submit">Adicionar cartão</button>
+              <span class="subtle">Voc&ecirc; pode usar o nome que fizer mais sentido para voc&ecirc;s.</span>
+              <button class="btn btn-primary" type="submit">Adicionar cart&atilde;o</button>
             </div>
           </form>
 
-          <div class="panel" style="margin-top: 20px; padding: 20px;">
+          <div class="panel-subsection">
             <h3 class="section-title">Registrar compra</h3>
             <form id="form-compra-cc">
               <div class="form-grid">
                 <div class="field span-2">
-                  <label for="cc-compra-cartao">Cartão</label>
+                  <label for="cc-compra-cartao">Cart&atilde;o</label>
                   <select id="cc-compra-cartao"></select>
                 </div>
                 <div class="field span-2">
-                  <label for="cc-compra-descricao">Descrição</label>
+                  <label for="cc-compra-descricao">Descri&ccedil;&atilde;o</label>
                   <input id="cc-compra-descricao" type="text" />
                 </div>
                 <div class="field">
@@ -232,7 +232,7 @@ const Layout = {
                   <input id="cc-compra-data" type="date" />
                 </div>
                 <div class="field span-2">
-                  <label for="cc-compra-obs">Observação</label>
+                  <label for="cc-compra-obs">Observa&ccedil;&atilde;o</label>
                   <textarea id="cc-compra-obs" rows="3"></textarea>
                 </div>
               </div>
@@ -245,12 +245,12 @@ const Layout = {
         </article>
 
         <article class="panel span-7">
-          <h3 class="section-title">Cartões cadastrados</h3>
+          <h3 class="section-title">Cart&otilde;es cadastrados</h3>
           <div id="cc-lista-cartoes" class="list"></div>
 
-          <div style="margin-top: 24px;">
-            <h3 class="section-title">Compras do mês</h3>
-            <p class="subtle">Parcelas que impactam o mês selecionado.</p>
+          <div class="section-block">
+            <h3 class="section-title">Compras do m&ecirc;s</h3>
+            <p class="subtle">Parcelas que impactam o m&ecirc;s selecionado.</p>
             <div id="cc-lista-compras" class="list"></div>
           </div>
         </article>
@@ -266,7 +266,7 @@ const Layout = {
       <section class="hero">
         <div>
           <h2>Rendimentos</h2>
-          <p>Separe entradas fixas e a renda variável da Meiry por mês.</p>
+          <p>Separe entradas fixas e a renda vari&aacute;vel da Meiry por m&ecirc;s.</p>
         </div>
         ${this._monthNav()}
       </section>
@@ -277,8 +277,8 @@ const Layout = {
           <form id="form-rendimento-fixo">
             <div class="form-grid">
               <div class="field span-2">
-                <label for="rf-descricao">Descrição</label>
-                <input id="rf-descricao" type="text" placeholder="Ex.: Salário Gabriel" />
+                <label for="rf-descricao">Descri&ccedil;&atilde;o</label>
+                <input id="rf-descricao" type="text" placeholder="Ex.: Sal&aacute;rio Gabriel" />
               </div>
               <div class="field">
                 <label for="rf-valor">Valor</label>
@@ -289,7 +289,7 @@ const Layout = {
                 <input id="rf-dia" type="number" min="1" max="31" />
               </div>
               <div class="field span-2">
-                <label for="rf-responsavel">Responsável</label>
+                <label for="rf-responsavel">Respons&aacute;vel</label>
                 <select id="rf-responsavel"></select>
               </div>
             </div>
@@ -299,17 +299,17 @@ const Layout = {
             </div>
           </form>
 
-          <div style="margin-top: 20px;">
+          <div class="section-block">
             <div id="rf-lista" class="list"></div>
           </div>
         </article>
 
         <article class="panel span-6">
-          <h3 class="section-title">Renda variável da Meiry</h3>
+          <h3 class="section-title">Renda vari&aacute;vel da Meiry</h3>
           <form id="form-rendimento-variavel">
             <div class="form-grid">
               <div class="field">
-                <label for="rv-mes">Mês</label>
+                <label for="rv-mes">M&ecirc;s</label>
                 <input id="rv-mes" type="month" />
               </div>
               <div class="field">
@@ -317,17 +317,17 @@ const Layout = {
                 <input id="rv-valor" type="number" min="0" step="0.01" />
               </div>
               <div class="field span-2">
-                <label for="rv-descricao">Descrição</label>
-                <input id="rv-descricao" type="text" placeholder="Ex.: Comissão, extra" />
+                <label for="rv-descricao">Descri&ccedil;&atilde;o</label>
+                <input id="rv-descricao" type="text" placeholder="Ex.: Comiss&atilde;o, extra" />
               </div>
             </div>
             <div class="actions-row">
-              <span class="subtle">Sempre vinculado à Meiry.</span>
-              <button class="btn btn-primary" type="submit">Salvar renda variável</button>
+              <span class="subtle">Sempre vinculado &agrave; Meiry.</span>
+              <button class="btn btn-primary" type="submit">Salvar renda vari&aacute;vel</button>
             </div>
           </form>
 
-          <div style="margin-top: 20px;">
+          <div class="section-block">
             <div id="rv-lista" class="list"></div>
           </div>
         </article>
@@ -342,8 +342,8 @@ const Layout = {
     el.innerHTML = `
       <section class="hero">
         <div>
-          <h2>Saúde financeira</h2>
-          <p>Veja o quanto do orçamento está comprometido e como os últimos meses evoluíram.</p>
+          <h2>Sa&uacute;de financeira</h2>
+          <p>Veja o quanto do or&ccedil;amento est&aacute; comprometido e como os &uacute;ltimos meses evolu&iacute;ram.</p>
         </div>
         ${this._monthNav()}
       </section>
@@ -354,8 +354,8 @@ const Layout = {
           <div id="saude-indicadores" class="list"></div>
         </article>
         <article class="panel span-7">
-          <h3 class="section-title">Histórico recente</h3>
-          <p class="subtle">Comparativo dos últimos 6 meses com despesas e compras no cartão.</p>
+          <h3 class="section-title">Historico recente</h3>
+          <p class="subtle">Comparativo dos ultimos 6 meses com despesas e compras no cartao.</p>
           <div id="saude-historico" class="list"></div>
         </article>
       </section>
@@ -365,15 +365,15 @@ const Layout = {
   _monthNav() {
     return `
       <div class="month-nav">
-        <button type="button" class="btn-icon" onclick="State.navegarMes(-1)">‹</button>
+        <button type="button" class="btn-icon" onclick="State.navegarMes(-1)">&lsaquo;</button>
         <strong class="mes-ref-label">${Utils.mesRefLabel(State?.mesRef || Utils.mesAtual())}</strong>
-        <button type="button" class="btn-icon" onclick="State.navegarMes(1)">›</button>
+        <button type="button" class="btn-icon" onclick="State.navegarMes(1)">&rsaquo;</button>
       </div>
     `;
   },
 
-  _navLink(href, icon, label) {
-    return `<a href="${href}" data-nav-link class="nav-link"><span>${icon}</span><span>${label}</span></a>`;
+  _navLink(href, label) {
+    return `<a href="${href}" data-nav-link class="nav-link"><span>${label}</span></a>`;
   },
 };
 
