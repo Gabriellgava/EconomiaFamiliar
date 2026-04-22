@@ -7,9 +7,17 @@ const Layout = {
       <div class="app-shell">
         <header class="app-header">
           <div class="container header-inner">
-            <div>
-              <h1 class="brand-title">Economia Familiar</h1>
-              <p class="brand-subtitle">Organiza&ccedil;&atilde;o financeira simples para Gabriel e Meiry.</p>
+            <div class="brand-block">
+              <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-nav-panel" aria-label="Abrir menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+              <div>
+                <h1 class="brand-title">Economia Familiar</h1>
+                <p class="brand-subtitle">Organiza&ccedil;&atilde;o financeira simples para Gabriel e Meiry.</p>
+              </div>
             </div>
 
             <button id="theme-toggle" class="theme-toggle" type="button">
@@ -17,17 +25,41 @@ const Layout = {
               <span id="theme-toggle-label">Modo escuro</span>
             </button>
           </div>
+
+          <div id="mobile-nav-backdrop" class="mobile-nav-backdrop hidden" data-mobile-nav-close></div>
+          <div id="mobile-nav-panel" class="mobile-nav-panel hidden" aria-hidden="true">
+            <div class="mobile-nav-header">
+              <div>
+                <p class="nav-title">Menu</p>
+                <strong>Navega&ccedil;&atilde;o r&aacute;pida</strong>
+              </div>
+              <button type="button" class="btn-icon mobile-nav-close" data-mobile-nav-close aria-label="Fechar menu">&times;</button>
+            </div>
+            <nav class="mobile-nav-list">
+              ${this._navLink('#dashboard', 'Painel', '&#9783;')}
+              ${this._navLink('#despesas', 'Despesas', '&#9679;')}
+              ${this._navLink('#cartoes', 'Cart&otilde;es', '&#128179;')}
+              ${this._navLink('#rendimentos', 'Rendimentos', '&#36;')}
+              ${this._navLink('#saude', 'Sa&uacute;de financeira', '&#10084;')}
+            </nav>
+            <div class="mobile-nav-footer">
+              <button id="theme-toggle-mobile" class="theme-toggle theme-toggle-mobile" type="button">
+                <span id="theme-toggle-mobile-icon" class="icon-chip">&#9790;</span>
+                <span id="theme-toggle-mobile-label">Modo escuro</span>
+              </button>
+            </div>
+          </div>
         </header>
 
         <main class="container main-grid">
           <aside class="sidebar">
             <p class="nav-title">Navega&ccedil;&atilde;o</p>
             <nav class="nav-list">
-              ${this._navLink('#dashboard', 'Painel')}
-              ${this._navLink('#despesas', 'Despesas')}
-              ${this._navLink('#cartoes', 'Cart&otilde;es')}
-              ${this._navLink('#rendimentos', 'Rendimentos')}
-              ${this._navLink('#saude', 'Sa&uacute;de financeira')}
+              ${this._navLink('#dashboard', 'Painel', '&#9783;')}
+              ${this._navLink('#despesas', 'Despesas', '&#9679;')}
+              ${this._navLink('#cartoes', 'Cart&otilde;es', '&#128179;')}
+              ${this._navLink('#rendimentos', 'Rendimentos', '&#36;')}
+              ${this._navLink('#saude', 'Sa&uacute;de financeira', '&#10084;')}
             </nav>
           </aside>
 
@@ -100,8 +132,15 @@ const Layout = {
         ${this._monthNav()}
       </section>
 
-      <section class="section-grid">
-        <article class="panel span-5">
+      <section class="panel">
+        <div class="subnav" id="desp-subnav">
+          <button type="button" class="subnav-button" data-desp-view="cadastro">Cadastrar despesa</button>
+          <button type="button" class="subnav-button" data-desp-view="listagem">Listar despesas</button>
+        </div>
+      </section>
+
+      <section id="desp-view-cadastro" class="section-grid" data-desp-screen>
+        <article class="panel span-8">
           <h3 class="section-title">Nova despesa</h3>
           <p class="subtle">Use recorr&ecirc;ncia quando a despesa se repetir m&ecirc;s a m&ecirc;s.</p>
 
@@ -146,10 +185,15 @@ const Layout = {
                 <small>Deixe em branco para continuar sem prazo final.</small>
               </div>
 
-              <div class="field span-2">
-                <label for="desp-obs">Observa&ccedil;&atilde;o</label>
-                <textarea id="desp-obs" rows="3" placeholder="Detalhes opcionais"></textarea>
-              </div>
+              <details class="field-group span-2 mobile-collapse">
+                <summary>Detalhes opcionais</summary>
+                <div class="field-group-content">
+                  <div class="field span-2">
+                    <label for="desp-obs">Observa&ccedil;&atilde;o</label>
+                    <textarea id="desp-obs" rows="3" placeholder="Detalhes opcionais"></textarea>
+                  </div>
+                </div>
+              </details>
             </div>
 
             <div class="actions-row">
@@ -158,8 +202,10 @@ const Layout = {
             </div>
           </form>
         </article>
+      </section>
 
-        <article class="panel span-7">
+      <section id="desp-view-listagem" class="section-grid hidden" data-desp-screen>
+        <article class="panel span-12">
           <h3 class="section-title">Lan&ccedil;amentos do m&ecirc;s</h3>
           <p class="subtle">Aqui aparecem as despesas ativas no m&ecirc;s selecionado.</p>
           <div id="desp-lista" class="list"></div>
@@ -247,10 +293,15 @@ const Layout = {
                 <label for="cc-compra-data">Data da compra</label>
                 <input id="cc-compra-data" type="date" />
               </div>
-              <div class="field span-2">
-                <label for="cc-compra-obs">Observa&ccedil;&atilde;o</label>
-                <textarea id="cc-compra-obs" rows="3"></textarea>
-              </div>
+              <details class="field-group span-2 mobile-collapse">
+                <summary>Adicionar observa&ccedil;&atilde;o</summary>
+                <div class="field-group-content">
+                  <div class="field span-2">
+                    <label for="cc-compra-obs">Observa&ccedil;&atilde;o</label>
+                    <textarea id="cc-compra-obs" rows="3" placeholder="Detalhes opcionais"></textarea>
+                  </div>
+                </div>
+              </details>
             </div>
             <div class="actions-row">
               <span id="cc-parcela-preview" class="badge hidden"></span>
@@ -301,8 +352,15 @@ const Layout = {
         ${this._monthNav()}
       </section>
 
-      <section class="section-grid">
-        <article class="panel span-6">
+      <section class="panel">
+        <div class="subnav" id="rend-subnav">
+          <button type="button" class="subnav-button" data-rend-view="fixos">Rendimentos fixos</button>
+          <button type="button" class="subnav-button" data-rend-view="variaveis">Renda vari&aacute;vel</button>
+        </div>
+      </section>
+
+      <section id="rend-view-fixos" class="section-grid" data-rend-screen>
+        <article class="panel span-8">
           <h3 class="section-title">Rendimentos fixos</h3>
           <form id="form-rendimento-fixo">
             <div class="form-grid">
@@ -333,8 +391,10 @@ const Layout = {
             <div id="rf-lista" class="list"></div>
           </div>
         </article>
+      </section>
 
-        <article class="panel span-6">
+      <section id="rend-view-variaveis" class="section-grid hidden" data-rend-screen>
+        <article class="panel span-8">
           <h3 class="section-title">Renda vari&aacute;vel da Meiry</h3>
           <form id="form-rendimento-variavel">
             <div class="form-grid">
@@ -378,14 +438,24 @@ const Layout = {
         ${this._monthNav()}
       </section>
 
-      <section class="section-grid">
-        <article class="panel span-5">
+      <section class="panel">
+        <div class="subnav" id="saude-subnav">
+          <button type="button" class="subnav-button" data-saude-view="indicadores">Indicadores</button>
+          <button type="button" class="subnav-button" data-saude-view="historico">Hist&oacute;rico</button>
+        </div>
+      </section>
+
+      <section id="saude-view-indicadores" class="section-grid" data-saude-screen>
+        <article class="panel span-8">
           <h3 class="section-title">Indicadores</h3>
           <div id="saude-indicadores" class="list"></div>
         </article>
-        <article class="panel span-7">
-          <h3 class="section-title">Historico recente</h3>
-          <p class="subtle">Comparativo dos ultimos 6 meses com despesas e compras no cartao.</p>
+      </section>
+
+      <section id="saude-view-historico" class="section-grid hidden" data-saude-screen>
+        <article class="panel span-12">
+          <h3 class="section-title">Hist&oacute;rico recente</h3>
+          <p class="subtle">Comparativo dos &uacute;ltimos 6 meses com despesas e compras no cart&atilde;o.</p>
           <div id="saude-historico" class="list"></div>
         </article>
       </section>
@@ -402,9 +472,15 @@ const Layout = {
     `;
   },
 
-  _navLink(href, label) {
-    return `<a href="${href}" data-nav-link class="nav-link"><span>${label}</span></a>`;
+  _navLink(href, label, icon) {
+    return `
+      <a href="${href}" data-nav-link class="nav-link">
+        <span class="nav-link-icon" aria-hidden="true">${icon || ''}</span>
+        <span>${label}</span>
+      </a>
+    `;
   },
 };
 
 window.Layout = Layout;
+

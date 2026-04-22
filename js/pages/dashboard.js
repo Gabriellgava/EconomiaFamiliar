@@ -1,4 +1,4 @@
-const PageDashboard = {
+﻿const PageDashboard = {
   init() {
     this._renderMetricas();
     this._renderResumo();
@@ -12,10 +12,10 @@ const PageDashboard = {
 
     const m = State.metricas;
     const cards = [
-      { label: 'Entradas totais', valor: m.entradas, hint: `Inclui ${Utils.fmtMoeda(m.rendaVariavel)} de renda variavel` },
-      { label: 'Despesas', valor: m.despesas, hint: 'Lancamentos diretos do mes' },
-      { label: 'Cartoes', valor: m.comprasCartao, hint: 'Parcelas que caem neste mes' },
-      { label: 'Saldo projetado', valor: m.saldo, hint: m.saldo >= 0 ? 'Mes respirando bem' : 'Atencao ao fluxo de caixa' },
+      { label: 'Entradas totais', valor: m.entradas, hint: `Inclui ${Utils.fmtMoeda(m.rendaVariavel)} de renda variável` },
+      { label: 'Despesas', valor: m.despesas, hint: 'Lançamentos diretos do mês' },
+      { label: 'Cartões', valor: m.comprasCartao, hint: 'Parcelas que caem neste mês' },
+      { label: 'Saldo projetado', valor: m.saldo, hint: m.saldo >= 0 ? 'Mês respirando bem' : 'Atenção ao fluxo de caixa' },
     ];
 
     el.innerHTML = cards.map(card => `
@@ -34,9 +34,9 @@ const PageDashboard = {
 
     const linhas = [
       ['Renda fixa', Utils.fmtMoeda(m.rendaFixa)],
-      ['Renda variavel (Meiry)', Utils.fmtMoeda(m.rendaVariavel)],
+      ['Renda variável (Meiry)', Utils.fmtMoeda(m.rendaVariavel)],
       ['Despesas ativas', Utils.fmtMoeda(m.despesas)],
-      ['Parcelas do cartao', Utils.fmtMoeda(m.comprasCartao)],
+      ['Parcelas do cartão', Utils.fmtMoeda(m.comprasCartao)],
       ['Comprometimento', `${Math.min(m.comprometimento, 999).toFixed(1)}%`],
     ];
 
@@ -67,7 +67,7 @@ const PageDashboard = {
         .map(item => ({
           data: item.data_compra,
           titulo: item.descricao,
-          meta: `${item.cartoes?.nome || 'Cartao'} - ${item.parcelas}x`,
+          meta: `${item.cartoes?.nome || 'Cartão'} - ${item.parcelas}x`,
           valor: Utils.valorParcelaMes(item, State.mesRef),
         })),
     ]
@@ -75,7 +75,7 @@ const PageDashboard = {
       .slice(0, 6);
 
     if (!itens.length) {
-      el.innerHTML = `<div class="empty-state">Nenhum lancamento encontrado para este mes.</div>`;
+      el.innerHTML = `<div class="empty-state">Nenhum lançamento encontrado para este mês.</div>`;
       return;
     }
 
@@ -98,3 +98,5 @@ const PageDashboard = {
 };
 
 window.PageDashboard = PageDashboard;
+
+

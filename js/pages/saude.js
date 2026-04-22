@@ -1,8 +1,37 @@
-const PageSaude = {
+﻿const PageSaude = {
+  _subnavBound: false,
+  _viewAtual: 'indicadores',
+
   init() {
+    this._bindSubnav();
     this._renderIndicadores();
     this._renderHistorico();
     this._atualizarMes();
+    this._mostrarTela(this._viewAtual);
+  },
+
+  _bindSubnav() {
+    if (this._subnavBound) return;
+    this._subnavBound = true;
+
+    document.querySelectorAll('[data-saude-view]').forEach(botao => {
+      botao.addEventListener('click', () => {
+        this._mostrarTela(botao.dataset.saudeView);
+      });
+    });
+  },
+
+  _mostrarTela(view) {
+    this._viewAtual = view;
+
+    document.querySelectorAll('[data-saude-screen]').forEach(screen => {
+      const ativo = screen.id === `saude-view-${view}`;
+      screen.classList.toggle('hidden', !ativo);
+    });
+
+    document.querySelectorAll('[data-saude-view]').forEach(botao => {
+      botao.classList.toggle('is-active', botao.dataset.saudeView === view);
+    });
   },
 
   _renderIndicadores() {
@@ -11,7 +40,7 @@ const PageSaude = {
 
     const m = State.metricas;
     const comprometimento = Math.min(Math.max(m.comprometimento, 0), 100);
-    const status = comprometimento <= 70 ? 'Confortavel' : comprometimento <= 90 ? 'Atencao' : 'Critico';
+    const status = comprometimento <= 70 ? 'Confortável' : comprometimento <= 90 ? 'Atenção' : 'Crítico';
     const statusClass = comprometimento <= 70 ? 'success' : comprometimento <= 90 ? 'warning' : 'danger';
 
     el.innerHTML = `
@@ -26,15 +55,15 @@ const PageSaude = {
 
       <div class="item-row">
         <div class="item-main">
-          <p class="item-title">Saldo do mes</p>
-          <p class="item-meta">Entradas ${Utils.fmtMoeda(m.entradas)} - saidas ${Utils.fmtMoeda(m.saidas)}</p>
+          <p class="item-title">Saldo do mês</p>
+          <p class="item-meta">Entradas ${Utils.fmtMoeda(m.entradas)} - saídas ${Utils.fmtMoeda(m.saidas)}</p>
         </div>
         <strong>${Utils.fmtMoeda(m.saldo)}</strong>
       </div>
 
       <div class="item-row">
         <div class="item-main">
-          <p class="item-title">Responsaveis monitorados</p>
+          <p class="item-title">Responsáveis monitorados</p>
           <p class="item-meta">Gabriel e Meiry</p>
         </div>
         <span class="badge">2 pessoas</span>
@@ -65,7 +94,7 @@ const PageSaude = {
       <div class="item-row">
         <div class="item-main">
           <p class="item-title">${Utils.mesRefLabel(item.mes)}</p>
-          <p class="item-meta">Despesas ${Utils.fmtMoeda(item.despesas)} - Cartoes ${Utils.fmtMoeda(item.compras)}</p>
+          <p class="item-meta">Despesas ${Utils.fmtMoeda(item.despesas)} - Cartões ${Utils.fmtMoeda(item.compras)}</p>
         </div>
         <div class="item-actions">
           <span class="badge ${item.saldo >= 0 ? 'success' : 'danger'}">${item.saldo >= 0 ? 'Positivo' : 'Negativo'}</span>
@@ -83,3 +112,5 @@ const PageSaude = {
 };
 
 window.PageSaude = PageSaude;
+
+

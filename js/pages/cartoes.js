@@ -1,4 +1,4 @@
-const PageCartoes = {
+﻿const PageCartoes = {
   _formCartaoBound: false,
   _formCompraBound: false,
   _previewBound: false,
@@ -51,7 +51,7 @@ const PageCartoes = {
     if (!el) return;
 
     if (!State.cartoes.length) {
-      el.innerHTML = `<div class="empty-state">Nenhum cartao cadastrado.</div>`;
+      el.innerHTML = `<div class="empty-state">Nenhum cartão cadastrado.</div>`;
       return;
     }
 
@@ -64,10 +64,10 @@ const PageCartoes = {
         <div class="item-row">
           <div class="item-main">
             <p class="item-title">${Utils.escapeHtml(item.nome)}</p>
-            <p class="item-meta">${Utils.escapeHtml(item.empresa || 'Empresa nao informada')}</p>
-            <span class="badge">Impacto no mes: ${Utils.fmtMoeda(gastoMes)}</span>
+            <p class="item-meta">${Utils.escapeHtml(item.empresa || 'Empresa não informada')}</p>
+            <span class="badge">Impacto no mês: ${Utils.fmtMoeda(gastoMes)}</span>
           </div>
-          <button type="button" class="btn-icon" onclick="PageCartoes._deletarCartao('${item.id}')">×</button>
+          <button type="button" class="btn-icon" onclick="PageCartoes._deletarCartao('${item.id}')">&times;</button>
         </div>
       `;
     }).join('');
@@ -78,7 +78,7 @@ const PageCartoes = {
     if (!el) return;
 
     if (!State.cartoes.length) {
-      el.innerHTML = `<div class="empty-state">Cadastre um cartao para comecar a lancar despesas.</div>`;
+      el.innerHTML = `<div class="empty-state">Cadastre um cartão para começar a lançar despesas.</div>`;
       return;
     }
 
@@ -91,7 +91,7 @@ const PageCartoes = {
         <div class="item-row">
           <div class="item-main">
             <p class="item-title">${Utils.escapeHtml(item.nome)}</p>
-            <p class="item-meta">${Utils.escapeHtml(item.empresa || 'Empresa nao informada')}</p>
+            <p class="item-meta">${Utils.escapeHtml(item.empresa || 'Empresa não informada')}</p>
           </div>
           <strong>${Utils.fmtMoeda(impacto)}</strong>
         </div>
@@ -114,8 +114,8 @@ const PageCartoes = {
     const total = compras.reduce((acc, item) => acc + Number(item.valor_total || 0), 0);
     const totalMes = compras.reduce((acc, item) => acc + Utils.valorParcelaMes(item, State.mesRef), 0);
     const cartaoSelecionado = filtroCartao === 'todos'
-      ? 'Todos os cartoes'
-      : State.cartoes.find(item => item.id === filtroCartao)?.nome || 'Cartao';
+      ? 'Todos os cartões'
+      : State.cartoes.find(item => item.id === filtroCartao)?.nome || 'Cartão';
 
     resumo.innerHTML = `
       <div class="item-row">
@@ -125,7 +125,7 @@ const PageCartoes = {
         </div>
         <div class="item-actions">
           <span class="badge">Total geral: ${Utils.fmtMoeda(total)}</span>
-          <span class="badge">Impacto no mes: ${Utils.fmtMoeda(totalMes)}</span>
+          <span class="badge">Impacto no mês: ${Utils.fmtMoeda(totalMes)}</span>
         </div>
       </div>
     `;
@@ -136,11 +136,11 @@ const PageCartoes = {
     }
 
     lista.innerHTML = compras.map(item => {
-      const cartaoNome = item.cartoes?.nome || 'Cartao';
+      const cartaoNome = item.cartoes?.nome || 'Cartão';
       const cartaoEmpresa = item.cartoes?.empresa ? ` - ${item.cartoes.empresa}` : '';
       const parcelaTexto = item.parcelas > 1
         ? `${item.parcelas}x de ${Utils.fmtMoeda(item.valor_total / item.parcelas)}`
-        : 'A vista';
+        : 'À vista';
 
       return `
         <div class="item-row">
@@ -150,12 +150,12 @@ const PageCartoes = {
               ${Utils.escapeHtml(cartaoNome)}${Utils.escapeHtml(cartaoEmpresa)} - ${Utils.escapeHtml(item.categoria)} - ${Utils.fmtData(item.data_compra)}
             </p>
             <p class="item-meta">
-              ${parcelaTexto} - Impacto no mes: ${Utils.fmtMoeda(Utils.valorParcelaMes(item, State.mesRef))}
+              ${parcelaTexto} - Impacto no mês: ${Utils.fmtMoeda(Utils.valorParcelaMes(item, State.mesRef))}
             </p>
           </div>
           <div class="item-actions">
             <strong>${Utils.fmtMoeda(item.valor_total)}</strong>
-            <button type="button" class="btn-icon" onclick="PageCartoes._deletarCompra('${item.id}')">×</button>
+            <button type="button" class="btn-icon" onclick="PageCartoes._deletarCompra('${item.id}')">&times;</button>
           </div>
         </div>
       `;
@@ -167,12 +167,12 @@ const PageCartoes = {
     if (!select) return;
 
     if (!State.cartoes.length) {
-      select.innerHTML = `<option value="">Cadastre um cartao primeiro</option>`;
+      select.innerHTML = `<option value="">Cadastre um cartão primeiro</option>`;
       return;
     }
 
     select.innerHTML = State.cartoes
-      .map(item => `<option value="${item.id}">${item.nome} - ${item.empresa || 'Sem empresa'}</option>`)
+      .map(item => `<option value="${item.id}">${Utils.escapeHtml(item.nome)} - ${Utils.escapeHtml(item.empresa || 'Sem empresa')}</option>`)
       .join('');
   },
 
@@ -182,8 +182,8 @@ const PageCartoes = {
 
     const atual = select.value || 'todos';
     select.innerHTML = `
-      <option value="todos">Todos os cartoes</option>
-      ${State.cartoes.map(item => `<option value="${item.id}">${item.nome} - ${item.empresa || 'Sem empresa'}</option>`).join('')}
+      <option value="todos">Todos os cartões</option>
+      ${State.cartoes.map(item => `<option value="${item.id}">${Utils.escapeHtml(item.nome)} - ${Utils.escapeHtml(item.empresa || 'Sem empresa')}</option>`).join('')}
     `;
     select.value = State.cartoes.some(item => item.id === atual) || atual === 'todos' ? atual : 'todos';
   },
@@ -223,10 +223,10 @@ const PageCartoes = {
         empresa: document.getElementById('cc-empresa').value.trim(),
       };
 
-      if (!payload.nome) return Utils.toast('Informe o nome do cartao.', 'warn');
-      if (!payload.empresa) return Utils.toast('Informe a empresa do cartao.', 'warn');
+      if (!payload.nome) return Utils.toast('Informe o nome do cartão.', 'warn');
+      if (!payload.empresa) return Utils.toast('Informe a empresa do cartão.', 'warn');
 
-      Utils.setLoading(botao, true, 'Adicionar cartao');
+      Utils.setLoading(botao, true, 'Adicionar cartão');
       try {
         const novo = await DB.addCartao(payload);
         State.cartoes.push(novo);
@@ -235,11 +235,11 @@ const PageCartoes = {
         this._populaSelectCartoes();
         this._populaFiltroCartoes();
         form.reset();
-        Utils.toast('Cartao adicionado.');
+        Utils.toast('Cartão adicionado.');
       } catch (error) {
         Utils.toast(error.message, 'error');
       } finally {
-        Utils.setLoading(botao, false, 'Adicionar cartao');
+        Utils.setLoading(botao, false, 'Adicionar cartão');
       }
     });
   },
@@ -262,9 +262,9 @@ const PageCartoes = {
         observacao: document.getElementById('cc-compra-obs').value.trim() || null,
       };
 
-      if (!payload.cartao_id) return Utils.toast('Selecione um cartao.', 'warn');
-      if (!payload.descricao) return Utils.toast('Informe a descricao da compra.', 'warn');
-      if (!payload.valor_total || payload.valor_total <= 0) return Utils.toast('Informe um valor valido.', 'warn');
+      if (!payload.cartao_id) return Utils.toast('Selecione um cartão.', 'warn');
+      if (!payload.descricao) return Utils.toast('Informe a descrição da compra.', 'warn');
+      if (!payload.valor_total || payload.valor_total <= 0) return Utils.toast('Informe um valor válido.', 'warn');
       if (!payload.data_compra) return Utils.toast('Informe a data da compra.', 'warn');
 
       Utils.setLoading(botao, true, 'Registrar compra');
@@ -319,7 +319,7 @@ const PageCartoes = {
   },
 
   async _deletarCartao(id) {
-    if (!window.confirm('Remover este cartao?')) return;
+    if (!window.confirm('Remover este cartão?')) return;
 
     try {
       await DB.deleteCartao(id);
@@ -329,7 +329,7 @@ const PageCartoes = {
       this._populaSelectCartoes();
       this._populaFiltroCartoes();
       this._renderConsulta();
-      Utils.toast('Cartao removido.');
+      Utils.toast('Cartão removido.');
     } catch (error) {
       Utils.toast(error.message, 'error');
     }
@@ -354,3 +354,5 @@ const PageCartoes = {
 };
 
 window.PageCartoes = PageCartoes;
+
+

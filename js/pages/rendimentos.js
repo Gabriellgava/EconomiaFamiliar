@@ -1,15 +1,43 @@
-const PageRendimentos = {
+﻿const PageRendimentos = {
   _fixoBound: false,
   _variavelBound: false,
+  _subnavBound: false,
+  _viewAtual: 'fixos',
 
   init() {
     this._populaResponsaveis();
     this._preencheMesAtual();
+    this._bindSubnav();
     this._bindFixo();
     this._bindVariavel();
     this._renderFixos();
     this._renderVariaveis();
     this._atualizarMes();
+    this._mostrarTela(this._viewAtual);
+  },
+
+  _bindSubnav() {
+    if (this._subnavBound) return;
+    this._subnavBound = true;
+
+    document.querySelectorAll('[data-rend-view]').forEach(botao => {
+      botao.addEventListener('click', () => {
+        this._mostrarTela(botao.dataset.rendView);
+      });
+    });
+  },
+
+  _mostrarTela(view) {
+    this._viewAtual = view;
+
+    document.querySelectorAll('[data-rend-screen]').forEach(screen => {
+      const ativo = screen.id === `rend-view-${view}`;
+      screen.classList.toggle('hidden', !ativo);
+    });
+
+    document.querySelectorAll('[data-rend-view]').forEach(botao => {
+      botao.classList.toggle('is-active', botao.dataset.rendView === view);
+    });
   },
 
   _populaResponsaveis() {
@@ -118,7 +146,7 @@ const PageRendimentos = {
         </div>
         <div class="item-actions">
           <strong>${Utils.fmtMoeda(item.valor)}</strong>
-          <button type="button" class="btn-icon" onclick="PageRendimentos._deletarFixo('${item.id}')">×</button>
+          <button type="button" class="btn-icon" onclick="PageRendimentos._deletarFixo('${item.id}')">&times;</button>
         </div>
       </div>
     `).join('');
@@ -141,7 +169,7 @@ const PageRendimentos = {
       <div class="item-row">
         <div class="item-main">
           <p class="item-title">${Utils.mesRefLabel(item.mes_ref)}</p>
-          <p class="item-meta">${item.descricao ? Utils.escapeHtml(item.descricao) : 'Sem observação'} · 👩 Meiry</p>
+          <p class="item-meta">${item.descricao ? Utils.escapeHtml(item.descricao) : 'Sem observação'} · ${Utils.emojiResponsavel('meiry')} Meiry</p>
         </div>
         <strong>${Utils.fmtMoeda(item.valor)}</strong>
       </div>
@@ -170,3 +198,5 @@ const PageRendimentos = {
 };
 
 window.PageRendimentos = PageRendimentos;
+
+

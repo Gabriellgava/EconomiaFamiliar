@@ -1,15 +1,43 @@
-const PageDespesas = {
+﻿const PageDespesas = {
   _bound: false,
   _tipoBound: false,
+  _subnavBound: false,
+  _viewAtual: 'cadastro',
 
   init() {
     this._populaCategorias();
     this._populaResponsaveis();
     this._setDataHoje();
+    this._bindSubnav();
     this._bindTipoDespesa();
     this._bindForm();
     this._renderLista();
     this._atualizarMes();
+    this._mostrarTela(this._viewAtual);
+  },
+
+  _bindSubnav() {
+    if (this._subnavBound) return;
+    this._subnavBound = true;
+
+    document.querySelectorAll('[data-desp-view]').forEach(botao => {
+      botao.addEventListener('click', () => {
+        this._mostrarTela(botao.dataset.despView);
+      });
+    });
+  },
+
+  _mostrarTela(view) {
+    this._viewAtual = view;
+
+    document.querySelectorAll('[data-desp-screen]').forEach(screen => {
+      const ativo = screen.id === `desp-view-${view}`;
+      screen.classList.toggle('hidden', !ativo);
+    });
+
+    document.querySelectorAll('[data-desp-view]').forEach(botao => {
+      botao.classList.toggle('is-active', botao.dataset.despView === view);
+    });
   },
 
   _populaCategorias() {
@@ -134,7 +162,7 @@ const PageDespesas = {
           <div class="item-actions">
             <span class="badge ${item.fixa ? 'success' : ''}">${item.fixa ? 'Recorrente' : 'Avulsa'}</span>
             <strong>${Utils.fmtMoeda(item.valor)}</strong>
-            <button type="button" class="btn-icon" onclick="PageDespesas._deletar('${item.id}')" aria-label="Excluir despesa">×</button>
+            <button type="button" class="btn-icon" onclick="PageDespesas._deletar('${item.id}')" aria-label="Excluir despesa">&times;</button>
           </div>
         </div>
       `;
@@ -164,3 +192,5 @@ const PageDespesas = {
 };
 
 window.PageDespesas = PageDespesas;
+
+

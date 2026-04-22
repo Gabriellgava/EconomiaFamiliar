@@ -1,19 +1,19 @@
-const Utils = {
+﻿const Utils = {
   RESPONSAVEIS: [
-    { value: 'gabriel', label: 'Gabriel', emoji: '👨' },
-    { value: 'meiry', label: 'Meiry', emoji: '👩' },
+    { value: 'gabriel', label: 'Gabriel', emoji: '\u{1F468}' },
+    { value: 'meiry', label: 'Meiry', emoji: '\u{1F469}' },
   ],
 
   CATEGORIAS_DESPESA: [
-    { nome: 'Moradia', icone: '🏠' },
-    { nome: 'Alimentação', icone: '🛒' },
-    { nome: 'Transporte', icone: '🚗' },
-    { nome: 'Saúde', icone: '💊' },
-    { nome: 'Educação', icone: '📚' },
-    { nome: 'Lazer', icone: '🎉' },
-    { nome: 'Contas', icone: '💡' },
-    { nome: 'Assinaturas', icone: '📺' },
-    { nome: 'Outros', icone: '📌' },
+    { nome: 'Moradia', icone: '\u{1F3E0}' },
+    { nome: 'Alimentação', icone: '\u{1F6D2}' },
+    { nome: 'Transporte', icone: '\u{1F697}' },
+    { nome: 'Saúde', icone: '\u{1F48A}' },
+    { nome: 'Educação', icone: '\u{1F4DA}' },
+    { nome: 'Lazer', icone: '\u{1F389}' },
+    { nome: 'Contas', icone: '\u{1F4A1}' },
+    { nome: 'Assinaturas', icone: '\u{1F4FA}' },
+    { nome: 'Outros', icone: '\u{1F4CC}' },
   ],
 
   fmtMoeda(valor = 0) {
@@ -50,16 +50,35 @@ const Utils = {
     }).format(new Date(ano, mes - 1, 1));
   },
 
+  corrigirTexto(valor = '') {
+    const texto = String(valor ?? '');
+    if (!/[ÃÂð]/.test(texto)) return texto;
+
+    try {
+      return decodeURIComponent(escape(texto));
+    } catch {
+      return texto;
+    }
+  },
+
   nomeResponsavel(valor) {
     return this.RESPONSAVEIS.find(item => item.value === valor)?.label || 'Não informado';
   },
 
   emojiResponsavel(valor) {
-    return this.RESPONSAVEIS.find(item => item.value === valor)?.emoji || '👤';
+    return this.RESPONSAVEIS.find(item => item.value === valor)?.emoji || '\u{1F464}';
   },
 
   iconeCategoria(nome) {
-    return this.CATEGORIAS_DESPESA.find(item => item.nome === nome)?.icone || '📌';
+    const categoriaNormalizada = this.corrigirTexto(nome)
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase();
+
+    return this.CATEGORIAS_DESPESA.find(item => item.nome
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase() === categoriaNormalizada)?.icone || '\u{1F4CC}';
   },
 
   valorParcelaMes(compra, mesRef) {
@@ -126,13 +145,13 @@ const Utils = {
 
     const el = document.createElement('div');
     el.className = `toast ${tipo}`;
-    el.textContent = mensagem;
+    el.textContent = this.corrigirTexto(mensagem);
     stack.appendChild(el);
     window.setTimeout(() => el.remove(), 3200);
   },
 
   escapeHtml(valor = '') {
-    return String(valor)
+    return String(this.corrigirTexto(valor))
       .replaceAll('&', '&amp;')
       .replaceAll('<', '&lt;')
       .replaceAll('>', '&gt;')
@@ -142,3 +161,4 @@ const Utils = {
 };
 
 window.Utils = Utils;
+

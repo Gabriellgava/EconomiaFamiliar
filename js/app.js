@@ -1,4 +1,4 @@
-const App = {
+﻿const App = {
   _rotas: {
     '#dashboard': () => PageDashboard.init(),
     '#despesas': () => PageDespesas.init(),
@@ -10,11 +10,14 @@ const App = {
   _rotaAtual: null,
   _listenersRegistrados: false,
   _themeKey: 'familia-financas-theme',
+  _mobileNavOpen: false,
 
   async init() {
     this._aplicarTemaSalvo();
     Layout.renderAppShell();
     this._bindThemeToggle();
+    this._bindMobileNav();
+    this._syncMobileCollapses();
 
     window.addEventListener('hashchange', () => this._rotear());
     this._registrarOuvintes();
@@ -24,7 +27,7 @@ const App = {
       await State.carregarTudo();
       this._rotear();
     } catch (error) {
-      console.error('Erro ao iniciar a aplicacao:', error);
+      console.error('Erro ao iniciar a aplicação:', error);
       this._mostrarErroInicial(error);
     }
   },
@@ -42,6 +45,8 @@ const App = {
       const ativo = el.getAttribute('href') === hash;
       el.classList.toggle('nav-active', ativo);
     });
+
+    this._fecharMenuMobile();
 
     document.querySelectorAll('[data-screen]').forEach(screen => {
       screen.classList.add('hidden');
@@ -86,15 +91,15 @@ const App = {
           <div class="item-row" style="align-items: flex-start;">
             <div class="icon-chip" style="color: var(--danger);">!</div>
             <div>
-              <h1 class="section-title">Nao foi possivel carregar os dados</h1>
+              <h1 class="section-title">Não foi possível carregar os dados</h1>
               <p class="subtle" style="margin-top: 8px;">
-                O app abriu, mas nao conseguiu concluir a conexao com o Supabase.
+                O app abriu, mas não conseguiu concluir a conexão com o Supabase.
               </p>
               <p style="margin-top: 14px;"><strong>Erro:</strong> ${mensagem}</p>
               <div class="subtle" style="margin-top: 16px; display: grid; gap: 6px;">
-                <p>Verifique se voce executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
-                <p>Confirme tambem se a URL e a chave em <code>js/config.js</code> estao corretas.</p>
-                <p>Depois de corrigir, recarregue a pagina.</p>
+                <p>Verifique se você executou o arquivo <code>supabase/schema.sql</code> no SQL Editor do Supabase.</p>
+                <p>Confirme também se a URL e a chave em <code>js/config.js</code> estão corretas.</p>
+                <p>Depois de corrigir, recarregue a página.</p>
               </div>
             </div>
           </div>
@@ -110,15 +115,92 @@ const App = {
   },
 
   _bindThemeToggle() {
-    const btn = document.getElementById('theme-toggle');
-    if (!btn) return;
-
     this._atualizarToggleTema();
+    document.querySelectorAll('#theme-toggle, #theme-toggle-mobile').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const atual = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+        const proximo = atual === 'dark' ? 'light' : 'dark';
+        this._definirTema(proximo, true);
+      });
+    });
+  },
 
-    btn.addEventListener('click', () => {
-      const atual = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-      const proximo = atual === 'dark' ? 'light' : 'dark';
-      this._definirTema(proximo, true);
+  _bindMobileNav() {
+    const toggle = document.getElementById('mobile-menu-toggle');
+    const closers = document.querySelectorAll('[data-mobile-nav-close]');
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        if (this._mobileNavOpen) {
+          this._fecharMenuMobile();
+        } else {
+          this._abrirMenuMobile();
+        }
+      });
+    }
+
+    closers.forEach(item => {
+      item.addEventListener('click', () => this._fecharMenuMobile());
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 720) {
+        this._fecharMenuMobile();
+      }
+      this._syncMobileCollapses();
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && this._mobileNavOpen) {
+        this._fecharMenuMobile();
+      }
+    });
+  },
+
+  _abrirMenuMobile() {
+    const panel = document.getElementById('mobile-nav-panel');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    const toggle = document.getElementById('mobile-menu-toggle');
+    if (!panel || !backdrop || !toggle) return;
+
+    panel.classList.remove('hidden');
+    backdrop.classList.remove('hidden');
+    panel.classList.add('is-open');
+    backdrop.classList.add('is-open');
+    panel.setAttribute('aria-hidden', 'false');
+    toggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('mobile-nav-open');
+    this._mobileNavOpen = true;
+  },
+
+  _fecharMenuMobile() {
+    const panel = document.getElementById('mobile-nav-panel');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    const toggle = document.getElementById('mobile-menu-toggle');
+
+    if (panel) {
+      panel.classList.add('hidden');
+      panel.classList.remove('is-open');
+      panel.setAttribute('aria-hidden', 'true');
+    }
+
+    if (backdrop) {
+      backdrop.classList.add('hidden');
+      backdrop.classList.remove('is-open');
+    }
+
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+
+    document.body.classList.remove('mobile-nav-open');
+    this._mobileNavOpen = false;
+  },
+
+  _syncMobileCollapses() {
+    const isMobile = window.innerWidth <= 720;
+    document.querySelectorAll('.mobile-collapse').forEach(item => {
+      item.open = !isMobile;
     });
   },
 
@@ -132,12 +214,26 @@ const App = {
 
   _atualizarToggleTema() {
     const isDark = document.documentElement.dataset.theme === 'dark';
-    const label = document.getElementById('theme-toggle-label');
-    const icon = document.getElementById('theme-toggle-icon');
-    if (label) label.textContent = isDark ? 'Modo claro' : 'Modo escuro';
-    if (icon) icon.innerHTML = isDark ? '&#9728;' : '&#9790;';
+    const labels = [
+      document.getElementById('theme-toggle-label'),
+      document.getElementById('theme-toggle-mobile-label'),
+    ];
+    const icons = [
+      document.getElementById('theme-toggle-icon'),
+      document.getElementById('theme-toggle-mobile-icon'),
+    ];
+
+    labels.forEach(label => {
+      if (label) label.textContent = isDark ? 'Modo claro' : 'Modo escuro';
+    });
+
+    icons.forEach(icon => {
+      if (icon) icon.innerHTML = isDark ? '&#9728;' : '&#9790;';
+    });
   },
 };
 
 document.addEventListener('DOMContentLoaded', () => App.init());
 window.App = App;
+
+
