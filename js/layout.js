@@ -1,4 +1,4 @@
-const Layout = {
+﻿const Layout = {
   renderAppShell() {
     const root = document.getElementById('app-root');
     if (!root) return;
@@ -100,8 +100,60 @@ const Layout = {
       <section id="dashboard-metricas" class="metrics-grid"></section>
 
       <section class="section-grid">
+        <article class="panel span-6">
+          <div class="panel-heading">
+            <div>
+              <h3 class="section-title">Panorama do m&ecirc;s</h3>
+              <p class="subtle">Compare entradas, despesas, cart&otilde;es e saldo em um s&oacute; lugar.</p>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart-mes-atual"></canvas>
+          </div>
+        </article>
+
+        <article class="panel span-6">
+          <div class="panel-heading">
+            <div>
+              <h3 class="section-title">Despesas por categoria</h3>
+              <p class="subtle">Veja quais grupos mais pesam no or&ccedil;amento do m&ecirc;s.</p>
+            </div>
+          </div>
+          <div class="chart-wrap chart-wrap-donut">
+            <canvas id="chart-categorias"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-grid">
+        <article class="panel span-8">
+          <div class="panel-heading">
+            <div>
+              <h3 class="section-title">Evolu&ccedil;&atilde;o de 6 meses</h3>
+              <p class="subtle">Acompanhe saldo, despesas e cart&otilde;es ao longo do tempo.</p>
+            </div>
+          </div>
+          <div class="chart-wrap chart-wrap-wide">
+            <canvas id="chart-evolucao"></canvas>
+          </div>
+        </article>
+
+        <article class="panel span-4">
+          <div class="panel-heading">
+            <div>
+              <h3 class="section-title">Impacto por cart&atilde;o</h3>
+              <p class="subtle">Descubra qual cart&atilde;o mais compromete o m&ecirc;s atual.</p>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart-cartoes"></canvas>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-grid">
         <article class="panel span-7">
-          <div class="actions-row">
+          <div class="panel-heading">
             <div>
               <h3 class="section-title">Resumo do m&ecirc;s</h3>
               <p class="subtle">Entradas e sa&iacute;das com atualiza&ccedil;&atilde;o autom&aacute;tica.</p>
@@ -111,8 +163,12 @@ const Layout = {
         </article>
 
         <article class="panel span-5">
-          <h3 class="section-title">&Uacute;ltimos lan&ccedil;amentos</h3>
-          <p class="subtle">Despesas e compras mais recentes.</p>
+          <div class="panel-heading">
+            <div>
+              <h3 class="section-title">&Uacute;ltimos lan&ccedil;amentos</h3>
+              <p class="subtle">Despesas e compras mais recentes.</p>
+            </div>
+          </div>
           <div id="dashboard-ultimos" class="list"></div>
         </article>
       </section>
@@ -483,4 +539,5 @@ const Layout = {
 };
 
 window.Layout = Layout;
+
 

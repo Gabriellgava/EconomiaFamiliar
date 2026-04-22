@@ -210,6 +210,8 @@
       window.localStorage.setItem(this._themeKey, tema);
     }
     this._atualizarToggleTema();
+    const fn = this._rotas[this._rotaAtual];
+    if (fn) fn();
   },
 
   _atualizarToggleTema() {

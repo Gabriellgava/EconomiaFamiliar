@@ -409,6 +409,14 @@ html[data-theme='dark'] input::-webkit-calendar-picker-indicator {
   padding: 24px;
 }
 
+.panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
 .panel-subsection {
   margin-top: 20px;
   padding: 20px;
@@ -438,6 +446,19 @@ html[data-theme='dark'] input::-webkit-calendar-picker-indicator {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+}
+
+.chart-wrap {
+  position: relative;
+  min-height: 280px;
+}
+
+.chart-wrap.chart-wrap-wide {
+  min-height: 320px;
+}
+
+.chart-wrap.chart-wrap-donut {
+  min-height: 320px;
 }
 
 .metric-card {
@@ -843,6 +864,10 @@ body.mobile-nav-open {
     border-radius: 24px;
   }
 
+  .panel-heading {
+    margin-bottom: 14px;
+  }
+
   .panel,
   .metric-card,
   .empty-state {
@@ -894,6 +919,12 @@ body.mobile-nav-open {
 
   .actions-row .subtle {
     font-size: 0.88rem;
+  }
+
+  .chart-wrap,
+  .chart-wrap.chart-wrap-wide,
+  .chart-wrap.chart-wrap-donut {
+    min-height: 240px;
   }
 
   .metrics-grid,
